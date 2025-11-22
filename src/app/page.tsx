@@ -4,15 +4,15 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { PlusIcon } from "lucide-react"
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
-import Toasts from "@/components/homepage/Toasts"
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { PlusIcon } from "lucide-react";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import Toasts from "@/components/homepage/Toasts";
 
 export default function Home() {
   return (
-    <main className="flex flex-col items-center justify-center max-w-5xl w-full gap-4 py-4">
+    <div className="flex flex-col items-center justify-center max-w-5xl w-full gap-4 py-4">
       <Card className="w-full">
         <CardHeader>
           <CardTitle>Welcome to the Dashboard</CardTitle>
@@ -22,7 +22,7 @@ export default function Home() {
 
           <CardContent className="flex flex-col gap-4">
             <p>
-              Here i wrote random text because we need to fill the card content
+              I'll just do a small shadcn demo here
             </p>
 
             <Button className="w-fit">
@@ -56,10 +56,9 @@ export default function Home() {
             </Alert>
 
             <Toasts />
-
           </CardContent>
         </CardHeader>
       </Card>
-    </main>
-  )
+    </div>
+  );
 }
