@@ -35,3 +35,4 @@ export function getElementTypeConfig(type: string) {
   return elementTypeConfig[type as ElementType] || elementTypeConfig.OTHER;
 }
 
+

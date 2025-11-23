@@ -6,6 +6,7 @@ import { defaultId } from "@/protoype";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { PencilIcon, XIcon } from "lucide-react";
+import { notFound } from "next/navigation";
 
 export default async function Dashboard({
   searchParams,
@@ -15,6 +16,10 @@ export default async function Dashboard({
   const agency = await getAgency(defaultId);
   const { edit } = await searchParams;
   const isEditMode = edit === "true";
+
+  if (!agency) {
+    notFound();
+  }
 
   return (
     <div className="flex flex-col items-center justify-center w-full gap-6">
