@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { createInspection } from "@/lib/dashboard-mgt-bff/api";
 import { Input } from "../ui/input";
@@ -39,12 +39,8 @@ export default function CreateInspectionForm(props: {
     status: "TO_DO",
     date: "",
     inspectorId: "",
+    rooms: [],
   });
-
-  // Validate that all required fields are filled
-  const isFormValid = useMemo(() => {
-    return inspection.date.trim() !== "" && inspection.status.trim() !== "";
-  }, [inspection]);
 
   const submit = async () => {
     try {
@@ -165,7 +161,7 @@ export default function CreateInspectionForm(props: {
 
       {/* Submit Button */}
       <div className="flex justify-end">
-        <Button onClick={submit} disabled={!isFormValid || loading} size="lg">
+        <Button onClick={submit} size="lg">
           {loading ? (
             <>
               <Loader2 className="w-4 h-4 mr-2 animate-spin" />

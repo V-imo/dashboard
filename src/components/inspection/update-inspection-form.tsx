@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { updateInspection } from "@/lib/dashboard-mgt-bff/api";
 import { Input } from "../ui/input";
@@ -22,11 +22,13 @@ import {
 } from "../ui/select";
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
-import { Inspection } from "@/lib/dashboard-mgt-bff";
-import DeleteInspectionButton from "./deleteInspectionButton";
+import { Inspection, Property } from "@/lib/dashboard-mgt-bff";
+import DeleteInspectionButton from "./delete-inspection-button";
+import InspectionRoomsManager from "./inspection-rooms-manager";
 
 export default function UpdateInspectionForm(props: {
   inspection?: Inspection;
+  property?: Property;
 }) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
@@ -38,38 +40,28 @@ export default function UpdateInspectionForm(props: {
       status: "TO_DO",
       date: "",
       inspectorId: "",
+      rooms: [],
     }
   );
 
-  // Sync local state when props.inspection changes (after server refresh)
+  // Only sync props to state when inspectionId changes (not on every props change)
+  // This prevents overwriting user edits when parent re-renders
+  const prevInspectionIdRef = useRef<string | undefined>(
+    props.inspection?.inspectionId
+  );
   useEffect(() => {
-    if (props.inspection) {
+    if (
+      props.inspection &&
+      props.inspection.inspectionId !== prevInspectionIdRef.current
+    ) {
       setInspection(props.inspection);
+      prevInspectionIdRef.current = props.inspection.inspectionId;
     }
   }, [props.inspection]);
-
-  // Validate that all required fields are filled and check if form has changes
-  const updateDisabled = useMemo(() => {
-    if (!props.inspection) return true;
-
-    // Check if all required fields are filled
-    const isFormValid =
-      inspection.date.trim() !== "" && inspection.status.trim() !== "";
-
-    if (!isFormValid) return true;
-
-    // Check if nothing has changed
-    return (
-      inspection.date === props.inspection.date &&
-      inspection.status === props.inspection.status &&
-      inspection.inspectorId === props.inspection.inspectorId
-    );
-  }, [inspection, props.inspection]);
 
   const submit = async () => {
     try {
       setLoading(true);
-      // Ensure inspectionId, propertyId, and agencyId are preserved and never updated
       await updateInspection({
         ...inspection,
         inspectionId: props.inspection?.inspectionId || inspection.inspectionId,
@@ -77,7 +69,7 @@ export default function UpdateInspectionForm(props: {
         agencyId: props.inspection?.agencyId || inspection.agencyId,
       });
       toast.success("Inspection updated successfully");
-      router.refresh(); // This will re-fetch the server-side data
+      router.refresh();
     } catch (error) {
       toast.error("Failed to update inspection");
       console.error(error);
@@ -92,9 +84,7 @@ export default function UpdateInspectionForm(props: {
       <Card>
         <CardHeader>
           <CardTitle>Inspection Details</CardTitle>
-          <CardDescription>
-            Update the inspection information
-          </CardDescription>
+          <CardDescription>Update the inspection information</CardDescription>
         </CardHeader>
         <CardContent className="flex flex-col gap-4">
           <div>
@@ -110,7 +100,9 @@ export default function UpdateInspectionForm(props: {
               onChange={(e) =>
                 setInspection({
                   ...inspection,
-                  date: e.target.value ? new Date(e.target.value).toISOString() : "",
+                  date: e.target.value
+                    ? new Date(e.target.value).toISOString()
+                    : "",
                 })
               }
               placeholder="Date"
@@ -121,7 +113,9 @@ export default function UpdateInspectionForm(props: {
             <Label htmlFor="status">Status</Label>
             <Select
               value={inspection.status}
-              onValueChange={(value: "TO_DO" | "IN_PROGRESS" | "DONE" | "CANCELED") =>
+              onValueChange={(
+                value: "TO_DO" | "IN_PROGRESS" | "DONE" | "CANCELED"
+              ) =>
                 setInspection({
                   ...inspection,
                   status: value,
@@ -158,6 +152,15 @@ export default function UpdateInspectionForm(props: {
         </CardContent>
       </Card>
 
+      {/* Inspection Rooms Section */}
+      {props.property && (
+        <InspectionRoomsManager
+          propertyRooms={props.property.rooms || []}
+          inspectionRooms={inspection.rooms || []}
+          onChange={(rooms) => setInspection({ ...inspection, rooms })}
+        />
+      )}
+
       {/* Submit Button */}
       <div className="flex justify-end gap-2">
         {inspection.inspectionId && inspection.propertyId && (
@@ -166,7 +169,7 @@ export default function UpdateInspectionForm(props: {
             inspectionId={inspection.inspectionId}
           />
         )}
-        <Button onClick={submit} disabled={updateDisabled || loading} size="lg">
+        <Button onClick={submit} size="lg">
           {loading ? (
             <>
               <Loader2 className="w-4 h-4 mr-2 animate-spin" />
@@ -180,4 +183,3 @@ export default function UpdateInspectionForm(props: {
     </div>
   );
 }
-

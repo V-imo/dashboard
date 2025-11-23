@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { updateProperty } from "@/lib/dashboard-mgt-bff/api";
 import { Input } from "../ui/input";
@@ -23,7 +23,8 @@ import {
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
 import { Property } from "@/lib/dashboard-mgt-bff";
-import DeletePropertyButton from "./deletePropertyButton";
+import DeletePropertyButton from "./delete-property-button";
+import RoomsManager from "../shared/rooms-manager";
 
 export default function UpdatePropertyForm(props: { property?: Property }) {
   const router = useRouter();
@@ -49,42 +50,11 @@ export default function UpdatePropertyForm(props: { property?: Property }) {
     }
   );
 
-  // Sync local state when props.property changes (after server refresh)
   useEffect(() => {
     if (props.property) {
       setProperty(props.property);
     }
   }, [props.property]);
-
-  // Validate that all required fields are filled and check if form has changes
-  const updateDisabled = useMemo(() => {
-    if (!props.property) return true;
-
-    // Check if all required fields are filled
-    const isFormValid =
-      property.address.number.trim() !== "" &&
-      property.address.street.trim() !== "" &&
-      property.address.city.trim() !== "" &&
-      property.address.zipCode.trim() !== "" &&
-      property.address.country.trim() !== "" &&
-      property.owner?.firstName.trim() !== "" &&
-      property.owner?.lastName.trim() !== "";
-
-    if (!isFormValid) return true;
-
-    // Check if nothing has changed
-    return (
-      property.address.number === props.property.address.number &&
-      property.address.street === props.property.address.street &&
-      property.address.city === props.property.address.city &&
-      property.address.zipCode === props.property.address.zipCode &&
-      property.address.country === props.property.address.country &&
-      property.owner?.firstName === props.property.owner?.firstName &&
-      property.owner?.lastName === props.property.owner?.lastName &&
-      property.owner?.mail === props.property.owner?.mail &&
-      property.owner?.phoneNumber === props.property.owner?.phoneNumber
-    );
-  }, [property, props.property]);
 
   const submit = async () => {
     try {
@@ -310,10 +280,16 @@ export default function UpdatePropertyForm(props: { property?: Property }) {
         </CardContent>
       </Card>
 
+      {/* Rooms Section */}
+      <RoomsManager
+        rooms={property.rooms || []}
+        onChange={(rooms) => setProperty({ ...property, rooms })}
+      />
+
       {/* Submit Button */}
       <div className="flex justify-end gap-2">
         <DeletePropertyButton propertyId={property.propertyId} />
-        <Button onClick={submit} disabled={updateDisabled || loading} size="lg">
+        <Button onClick={submit} size="lg">
           {loading ? (
             <>
               <Loader2 className="w-4 h-4 mr-2 animate-spin" />

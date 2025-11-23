@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { createProperty } from "@/lib/dashboard-mgt-bff/api";
 import { Input } from "../ui/input";
@@ -24,6 +24,7 @@ import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
 import { defaultId } from "@/protoype";
 import { Property } from "@/lib/dashboard-mgt-bff";
+import RoomsManager from "../shared/rooms-manager";
 
 export default function CreatePropertyForm() {
   const router = useRouter();
@@ -45,19 +46,6 @@ export default function CreatePropertyForm() {
     },
     rooms: [],
   });
-
-  // Validate that all required fields are filled
-  const isFormValid = useMemo(() => {
-    return (
-      property.address.number.trim() !== "" &&
-      property.address.street.trim() !== "" &&
-      property.address.city.trim() !== "" &&
-      property.address.zipCode.trim() !== "" &&
-      property.address.country.trim() !== "" &&
-      property.owner?.firstName.trim() !== "" &&
-      property.owner?.lastName.trim() !== ""
-    );
-  }, [property]);
 
   const submit = async () => {
     try {
@@ -279,9 +267,15 @@ export default function CreatePropertyForm() {
         </CardContent>
       </Card>
 
+      {/* Rooms Section */}
+      <RoomsManager
+        rooms={property.rooms || []}
+        onChange={(rooms) => setProperty({ ...property, rooms })}
+      />
+
       {/* Submit Button */}
       <div className="flex justify-end">
-        <Button onClick={submit} disabled={!isFormValid || loading} size="lg">
+        <Button onClick={submit} size="lg">
           {loading ? (
             <>
               <Loader2 className="w-4 h-4 mr-2 animate-spin" />

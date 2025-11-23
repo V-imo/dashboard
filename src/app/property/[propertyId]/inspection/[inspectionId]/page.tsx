@@ -1,32 +1,65 @@
-import UpdateInspectionForm from "@/components/inspection/updateInspectionForm";
-import { getInspection } from "@/lib/dashboard-mgt-bff/api";
+import UpdateInspectionForm from "@/components/inspection/update-inspection-form";
+import InspectionDisplay from "@/components/inspection/inspection-display";
+import { getInspection, getProperty } from "@/lib/dashboard-mgt-bff/api";
 import { defaultId } from "@/protoype";
-import { HouseIcon } from "lucide-react";
+import { HouseIcon, PencilIcon, XIcon } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { Button } from "@/components/ui/button";
 
 export default async function InspectionPage({
   params,
+  searchParams,
 }: {
-  params: { propertyId: string; inspectionId: string };
+  params: Promise<{ propertyId: string; inspectionId: string }>;
+  searchParams: Promise<{ edit?: string }>;
 }) {
+  const { propertyId, inspectionId } = await params;
+  const { edit } = await searchParams;
+  const isEditMode = edit === "true";
+
   try {
-    const inspection = await getInspection(
-      defaultId,
-      params.propertyId,
-      params.inspectionId
-    );
+    const [inspection, property] = await Promise.all([
+      getInspection(defaultId, propertyId, inspectionId),
+      getProperty(defaultId, propertyId),
+    ]);
+
+    if (!inspection || !property) {
+      notFound();
+    }
+
     return (
       <div className="flex flex-col items-center justify-center w-full gap-2">
-        <div className="flex justify-end w-full max-w-4xl">
-          <Link
-            href={`/property/${params.propertyId}`}
-            className="shadow-md p-2 rounded-md hover:bg-gray-100 flex justify-center items-center gap-2"
-          ><HouseIcon className="w-4 h-4" />
-            See Property
-          </Link>
+        <div className="flex justify-end gap-2 w-full max-w-4xl">
+          <Button asChild variant="outline" size="lg">
+            <Link href={`/property/${propertyId}`}>
+              <HouseIcon className="w-4 h-4 mr-2" />
+              See Property
+            </Link>
+          </Button>
+          {isEditMode ? (
+            <Button asChild variant="outline" size="lg">
+              <Link href={`/property/${propertyId}/inspection/${inspectionId}`}>
+                <XIcon className="w-4 h-4 mr-2" />
+                Cancel
+              </Link>
+            </Button>
+          ) : (
+            <Button asChild size="lg">
+              <Link
+                href={`/property/${propertyId}/inspection/${inspectionId}?edit=true`}
+              >
+                <PencilIcon className="w-4 h-4 mr-2" />
+                Edit
+              </Link>
+            </Button>
+          )}
         </div>
-        <UpdateInspectionForm inspection={inspection} />
+        {isEditMode ? (
+          <UpdateInspectionForm inspection={inspection} property={property} />
+        ) : (
+          <InspectionDisplay inspection={inspection} property={property} />
+        )}
       </div>
     );
   } catch (error) {

@@ -35,6 +35,11 @@ const pages = [
         href: "/property/new",
         description: "Add a new property to the system",
       },
+      {
+        name: "Model",
+        href: "/model",
+        description: "View and manage the models",
+      },
     ],
   },
   {
@@ -115,7 +120,7 @@ export function NavMenu() {
                 </NavigationMenuContent>
               </>
             ) : (
-              <Link href={page.href} legacyBehavior passHref>
+              <Link href={page.href} passHref>
                 <NavigationMenuLink className={navigationMenuTriggerStyle()}>
                   {page.name}
                 </NavigationMenuLink>

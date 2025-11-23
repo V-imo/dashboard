@@ -28,14 +28,8 @@ export default function DeleteInspectionButton(props: {
     }
   };
   return (
-    <Button
-      variant="destructive"
-      disabled={loading}
-      size="lg"
-      onClick={del}
-    >
+    <Button variant="destructive" disabled={loading} size="lg" onClick={del}>
       <TrashIcon className="w-4 h-4" /> Delete Inspection
     </Button>
   );
 }
-
