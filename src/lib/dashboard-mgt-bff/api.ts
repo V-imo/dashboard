@@ -1,4 +1,4 @@
-import { Agency, client, Inspection, Property } from "./index";
+import { Agency, client, Inspection, Model, Property } from "./index";
 
 export const getInspections = async (agencyId: string) => {
   const response = await client.GET("/inspection/{agencyId}", {
@@ -126,6 +126,47 @@ export const getProperty = async (agencyId: string, propertyId: string) => {
   const response = await client.GET("/property/{agencyId}/{propertyId}", {
     params: {
       path: { agencyId, propertyId },
+    },
+  });
+  return response.data;
+};
+
+export const getModels = async (agencyId: string) => {
+  const response = await client.GET("/model/{agencyId}", {
+    params: {
+      path: { agencyId },
+    },
+  });
+  return response.data;
+};
+
+export const getModel = async (agencyId: string, modelId: string) => {
+  const response = await client.GET("/model/{agencyId}/{modelId}", {
+    params: {
+      path: { agencyId, modelId },
+    },
+  });
+  return response.data;
+};
+
+export const createModel = async (model: Omit<Model, "modelId">) => {
+  const response = await client.POST("/model", {
+    body: model,
+  });
+  return response.data;
+};
+
+export const updateModel = async (model: Model) => {
+  const response = await client.PATCH("/model", {
+    body: model,
+  });
+  return response.data;
+};
+
+export const deleteModel = async (agencyId: string, modelId: string) => {
+  const response = await client.DELETE("/model/{agencyId}/{modelId}", {
+    params: {
+      path: { agencyId, modelId },
     },
   });
   return response.data;

@@ -1,11 +1,17 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { Toaster } from "@/components/ui/sonner";
-import { NavMenu } from "@/components/navigation/NavMenu";
+import { NavMenu } from "@/components/navigation/nav-menu";
 
 export const metadata: Metadata = {
   title: "V'imo Dashboard",
   description: "V'imo Dashboard",
+  icons: {
+    icon: [
+      { url: "/icon-black.png", media: "(prefers-color-scheme: light)" },
+      { url: "/icon-white.png", media: "(prefers-color-scheme: dark)" },
+    ],
+  },
 };
 
 export default function RootLayout({
@@ -21,7 +27,9 @@ export default function RootLayout({
             <NavMenu />
           </nav>
         </header>
-        <main className="flex-1 w-full pb-20 md:pb-0 flex flex-col items-center m-2">{children}</main>
+        <main className="flex-1 w-full pb-20 md:pb-0 flex flex-col items-center m-2">
+          {children}
+        </main>
         <footer className="md:hidden w-full border-t fixed bottom-0 bg-background z-50">
           <nav className="container flex h-16 items-center justify-center w-full">
             <NavMenu />

@@ -516,7 +516,17 @@ export interface paths {
                             mail?: string;
                             phoneNumber?: string;
                         };
-                        rooms?: unknown;
+                        rooms: {
+                            name: string;
+                            area?: number;
+                            description?: string;
+                            elements: {
+                                name: string;
+                                description?: string;
+                                images?: string[];
+                                type: string;
+                            }[];
+                        }[];
                     };
                 };
             };
@@ -561,6 +571,193 @@ export interface paths {
         };
         trace?: never;
     };
+    "/model/{agencyId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Get all models of an agency */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    agencyId: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Get all models of an agency */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["Models"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/model/{agencyId}/{modelId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Get a model */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    agencyId: string;
+                    modelId: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Get a model */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["Model"];
+                    };
+                };
+                /** @description Model not found */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            message: string;
+                        };
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        /** @description Delete a model */
+        delete: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    agencyId: string;
+                    modelId: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Delete a model */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": string;
+                    };
+                };
+            };
+        };
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/model": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: {
+                content: {
+                    "application/json": {
+                        agencyId: string;
+                        name: string;
+                        rooms: {
+                            name: string;
+                            area?: number;
+                            description?: string;
+                            elements: {
+                                name: string;
+                                description?: string;
+                                images?: string[];
+                                type: string;
+                            }[];
+                        }[];
+                    };
+                };
+            };
+            responses: {
+                /** @description Create a model */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": string;
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: {
+                content: {
+                    "application/json": components["schemas"]["Model"];
+                };
+            };
+            responses: {
+                /** @description Update a model */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": string;
+                    };
+                };
+            };
+        };
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -573,6 +770,17 @@ export interface components {
             inspectorId?: string;
             date: string;
             agencyId: string;
+            rooms: {
+                name: string;
+                description?: string;
+                elements: {
+                    name: string;
+                    description?: string;
+                    images?: string[];
+                    /** @enum {string} */
+                    state: "GOOD" | "BAD" | "NEW" | "BROKEN";
+                }[];
+            }[];
         };
         Inspections: components["schemas"]["Inspection"][];
         Agency: {
@@ -604,9 +812,36 @@ export interface components {
                 mail?: string;
                 phoneNumber?: string;
             };
-            rooms?: unknown;
+            rooms: {
+                name: string;
+                area?: number;
+                description?: string;
+                elements: {
+                    name: string;
+                    description?: string;
+                    images?: string[];
+                    type: string;
+                }[];
+            }[];
         };
         Properties: components["schemas"]["Property"][];
+        Model: {
+            modelId: string;
+            agencyId: string;
+            name: string;
+            rooms: {
+                name: string;
+                area?: number;
+                description?: string;
+                elements: {
+                    name: string;
+                    description?: string;
+                    images?: string[];
+                    type: string;
+                }[];
+            }[];
+        };
+        Models: components["schemas"]["Model"][];
     };
     responses: never;
     parameters: never;

@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Agency } from "@/lib/dashboard-mgt-bff";
 import { updateAgency } from "@/lib/dashboard-mgt-bff/api";
@@ -43,20 +43,6 @@ export default function UpdateAgencyForm(props: { agency?: Agency }) {
       setAgency(props.agency);
     }
   }, [props.agency]);
-
-  const updateDisabled = useMemo(() => {
-    if (!props.agency) return false;
-    return (
-      agency.name === props.agency.name &&
-      agency.contactMail === props.agency.contactMail &&
-      agency.contactPhone === props.agency.contactPhone &&
-      agency.address.number === props.agency.address.number &&
-      agency.address.street === props.agency.address.street &&
-      agency.address.city === props.agency.address.city &&
-      agency.address.zipCode === props.agency.address.zipCode &&
-      agency.address.country === props.agency.address.country
-    );
-  }, [agency, props.agency]);
 
   const submit = async () => {
     try {
@@ -170,7 +156,7 @@ export default function UpdateAgencyForm(props: { agency?: Agency }) {
           <SelectItem value="GBR">England</SelectItem>
         </SelectContent>
       </Select>
-      <Button onClick={submit} disabled={updateDisabled || loading}>
+      <Button onClick={submit}>
         {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : "Update"}
       </Button>
     </div>

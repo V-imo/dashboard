@@ -1,4 +1,4 @@
-import CreateInspectionForm from "@/components/inspection/createInspectionForm";
+import CreateInspectionForm from "@/components/inspection/create-inspection-form";
 import { getProperty } from "@/lib/dashboard-mgt-bff/api";
 import { defaultId } from "@/protoype";
 import { ArrowLeftIcon } from "lucide-react";
