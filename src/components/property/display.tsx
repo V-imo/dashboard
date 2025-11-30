@@ -6,16 +6,18 @@ import {
   CardTitle,
 } from "../ui/card";
 import { Label } from "../ui/label";
-import { Property } from "@/lib/dashboard-mgt-bff";
+import { Property, Room, RoomElement } from "@/lib/dashboard-mgt-bff";
 import { MapPin, Mail, Phone, User, Home } from "lucide-react";
 import { getElementTypeConfig } from "../shared/element-type-icon";
 import { Badge } from "../ui/badge";
 
 interface PropertyDisplayProps {
   property: Property;
+  rooms: Room[];
+  roomElements: RoomElement[];
 }
 
-export default function PropertyDisplay({ property }: PropertyDisplayProps) {
+export default function PropertyDisplay({ property, rooms, roomElements }: PropertyDisplayProps) {
   const fullAddress = `${property.address.number} ${property.address.street}, ${property.address.city} ${property.address.zipCode}, ${property.address.country}`;
 
   return (
@@ -91,15 +93,15 @@ export default function PropertyDisplay({ property }: PropertyDisplayProps) {
               <CardTitle className="text-base sm:text-lg">Rooms</CardTitle>
             </div>
             <Badge variant="secondary" className="text-sm w-fit">
-              {property.rooms?.length || 0} room{property.rooms?.length !== 1 ? "s" : ""}
+              {rooms.length || 0} room{rooms.length !== 1 ? "s" : ""}
             </Badge>
           </div>
           <CardDescription>Rooms and elements in the property</CardDescription>
         </CardHeader>
         <CardContent className="flex flex-col gap-4 sm:gap-6">
-          {property.rooms && property.rooms.length > 0 ? (
+          {rooms && rooms.length > 0 ? (
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
-              {property.rooms.map((room, roomIndex) => (
+              {rooms.map((room, roomIndex) => (
                 <div
                   key={roomIndex}
                   className="border rounded-lg p-4 space-y-3 bg-muted/30"
@@ -113,10 +115,10 @@ export default function PropertyDisplay({ property }: PropertyDisplayProps) {
                         </p>
                       )}
                     </div>
-                    {room.elements && room.elements.length > 0 && (
+                    {roomElements.filter((element) => element.roomId === room.roomId).length > 0 && (
                       <Badge variant="outline" className="text-xs flex-shrink-0">
-                        {room.elements.length} element
-                        {room.elements.length !== 1 ? "s" : ""}
+                        {roomElements.filter((element) => element.roomId === room.roomId).length} element
+                        {roomElements.filter((element) => element.roomId === room.roomId).length !== 1 ? "s" : ""}
                       </Badge>
                     )}
                   </div>
@@ -125,13 +127,13 @@ export default function PropertyDisplay({ property }: PropertyDisplayProps) {
                       {room.description}
                     </p>
                   )}
-                  {room.elements && room.elements.length > 0 && (
+                  {roomElements.filter((element) => element.roomId === room.roomId).length > 0 && (
                     <div className="space-y-2 pt-2 border-t">
                       <Label className="text-xs text-muted-foreground">
                         Elements
                       </Label>
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                        {room.elements.map((element, elementIndex) => {
+                        {roomElements.filter((element) => element.roomId === room.roomId).map((element, elementIndex) => {
                           const typeConfig = getElementTypeConfig(element.type);
                           const Icon = typeConfig.icon;
                           return (
@@ -142,7 +144,7 @@ export default function PropertyDisplay({ property }: PropertyDisplayProps) {
                               <Icon className="w-4 h-4 text-muted-foreground flex-shrink-0" />
                               <div className="flex-1 min-w-0">
                                 <p className="text-sm font-medium truncate">
-                                  {element.name}
+                                  {roomElements.find((e) => e.elementId === element.elementId)?.name}
                                 </p>
                                 {element.description && (
                                   <p className="text-xs text-muted-foreground truncate">

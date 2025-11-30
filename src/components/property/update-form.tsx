@@ -1,8 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { createProperty } from "@/lib/dashboard-mgt-bff/api";
+import { updateProperty } from "@/lib/dashboard-mgt-bff/api";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import { Label } from "../ui/label";
@@ -22,39 +22,55 @@ import {
 } from "../ui/select";
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
-import { defaultId } from "@/protoype";
-import { Property } from "@/lib/dashboard-mgt-bff";
+import { Property, Room, RoomElement } from "@/lib/dashboard-mgt-bff";
+import DeletePropertyButton from "./delete-button";
 import RoomsManager from "../shared/rooms-manager";
 
-export default function CreatePropertyForm() {
+export default function UpdatePropertyForm(props: {
+  property?: Property;
+  rooms?: Room[];
+  roomElements?: RoomElement[];
+}) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
-  const [property, setProperty] = useState<Omit<Property, "propertyId">>({
-    agencyId: defaultId,
-    address: {
-      number: "",
-      street: "",
-      city: "",
-      zipCode: "",
-      country: "",
-    },
-    owner: {
-      firstName: "",
-      lastName: "",
-      mail: "",
-      phoneNumber: "",
-    },
-    rooms: [],
-  });
+  const [property, setProperty] = useState<Property>(
+    props.property || {
+      propertyId: "",
+      agencyId: "",
+      address: {
+        number: "",
+        street: "",
+        city: "",
+        zipCode: "",
+        country: "",
+      },
+      owner: {
+        firstName: "",
+        lastName: "",
+        mail: "",
+        phoneNumber: "",
+      },
+    }
+  );
+
+  useEffect(() => {
+    if (props.property) {
+      setProperty(props.property);
+    }
+  }, [props.property]);
 
   const submit = async () => {
     try {
       setLoading(true);
-      const propertyId = await createProperty(property as Property);
-      toast.success("Property created successfully");
-      router.push(`/property/${propertyId}`);
+      // Ensure propertyId is preserved and never updated
+      await updateProperty({
+        ...property,
+        propertyId: props.property?.propertyId || property.propertyId,
+      });
+      toast.success("Property updated successfully");
+      router.refresh(); // This will re-fetch the server-side data
     } catch (error) {
-      toast.error("Failed to create property");
+      toast.error("Failed to update property");
       console.error(error);
     } finally {
       setLoading(false);
@@ -68,7 +84,7 @@ export default function CreatePropertyForm() {
         <CardHeader>
           <CardTitle>Property Address</CardTitle>
           <CardDescription>
-            Enter the address details of the property
+            Update the address details of the property
           </CardDescription>
         </CardHeader>
         <CardContent className="flex flex-col gap-4">
@@ -183,7 +199,7 @@ export default function CreatePropertyForm() {
         <CardHeader>
           <CardTitle>Property Owner</CardTitle>
           <CardDescription>
-            Enter the contact information of the property owner
+            Update the contact information of the property owner
           </CardDescription>
         </CardHeader>
         <CardContent className="flex flex-col gap-4">
@@ -269,20 +285,22 @@ export default function CreatePropertyForm() {
 
       {/* Rooms Section */}
       <RoomsManager
-        rooms={property.rooms || []}
-        onChange={(rooms) => setProperty({ ...property, rooms })}
+        propertyId={property.propertyId}
+        rooms={props.rooms || []}
+        roomElements={props.roomElements || []}
       />
 
       {/* Submit Button */}
-      <div className="flex justify-end">
+      <div className="flex justify-end gap-2">
+        <DeletePropertyButton propertyId={property.propertyId} />
         <Button onClick={submit} size="lg">
           {loading ? (
             <>
               <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-              Creating...
+              Updating...
             </>
           ) : (
-            "Create Property"
+            "Update Property"
           )}
         </Button>
       </div>

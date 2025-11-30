@@ -12,18 +12,16 @@ import {
   CardTitle,
 } from "../ui/card";
 import { TrashIcon } from "lucide-react";
-import { Property, Inspection } from "@/lib/dashboard-mgt-bff";
+import { Inspection, RoomElement } from "@/lib/dashboard-mgt-bff";
 import { getElementTypeConfig } from "../shared/element-type-icon";
 import ElementStateBadge from "../shared/element-state-badge";
 import { cn } from "@/lib/utils";
 
-type PropertyRoom = Property["rooms"][number];
-type PropertyElement = PropertyRoom["elements"][number];
-type InspectionElement = Inspection["rooms"][number]["elements"][number];
+type InspectionElement = NonNullable<Inspection["elements"]>[number];
 
 interface InspectionElementEditorProps {
   element: InspectionElement;
-  propertyElement?: PropertyElement | null;
+  propertyRoomElement?: RoomElement | null;
   elementKey: string;
   onUpdate: (updates: Partial<InspectionElement>) => void;
   onRemove?: () => void;
@@ -32,7 +30,7 @@ interface InspectionElementEditorProps {
 
 export default function InspectionElementEditor({
   element,
-  propertyElement,
+  propertyRoomElement,
   elementKey,
   onUpdate,
   onRemove,
@@ -40,13 +38,15 @@ export default function InspectionElementEditor({
 }: InspectionElementEditorProps) {
   const [isExpanded, setIsExpanded] = useState(false);
 
-  const handleStateSelect = (state: "NEW" | "GOOD" | "BAD" | "BROKEN") => {
+  const handleStateSelect = (
+    state: "NEW" | "GOOD" | "BAD" | "BROKEN" | "MISSING"
+  ) => {
     onUpdate({ state });
     setIsExpanded(false);
   };
 
-  const typeConfig = propertyElement
-    ? getElementTypeConfig(propertyElement.type)
+  const typeConfig = propertyRoomElement
+    ? getElementTypeConfig(propertyRoomElement.type)
     : null;
   const Icon = typeConfig?.icon;
 
@@ -55,9 +55,7 @@ export default function InspectionElementEditor({
       <CardHeader>
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            {Icon && (
-              <Icon className="w-5 h-5 text-muted-foreground" />
-            )}
+            {Icon && <Icon className="w-5 h-5 text-muted-foreground" />}
             <CardTitle className="text-base">{element.name}</CardTitle>
           </div>
           {isAdditional && onRemove && (
@@ -67,15 +65,13 @@ export default function InspectionElementEditor({
             </Button>
           )}
         </div>
-        {propertyElement?.description && (
+        {propertyRoomElement?.description && (
           <CardDescription className="text-xs">
-            {propertyElement.description}
+            {propertyRoomElement.description}
           </CardDescription>
         )}
         {isAdditional && (
-          <CardDescription>
-            Element added during inspection
-          </CardDescription>
+          <CardDescription>Element added during inspection</CardDescription>
         )}
       </CardHeader>
       <CardContent className="flex flex-col gap-4">
@@ -95,23 +91,25 @@ export default function InspectionElementEditor({
           <Label>State</Label>
           <div className="flex flex-wrap gap-2">
             {isExpanded ? (
-              (["NEW", "GOOD", "BAD", "BROKEN"] as const).map((state) => (
-                <button
-                  key={state}
-                  type="button"
-                  onClick={() => handleStateSelect(state)}
-                  className="cursor-pointer transition-all"
-                >
-                  <ElementStateBadge state={state} />
-                </button>
-              ))
+              (["NEW", "GOOD", "BAD", "BROKEN", "MISSING"] as const).map(
+                (state) => (
+                  <button
+                    key={state}
+                    type="button"
+                    onClick={() => handleStateSelect(state)}
+                    className="cursor-pointer transition-all"
+                  >
+                    <ElementStateBadge state={state} />
+                  </button>
+                )
+              )
             ) : (
               <button
                 type="button"
                 onClick={() => setIsExpanded(true)}
                 className="cursor-pointer"
               >
-                <ElementStateBadge state={element.state} />
+                <ElementStateBadge state={element.state || "NEW"} />
               </button>
             )}
           </div>
@@ -120,4 +118,3 @@ export default function InspectionElementEditor({
     </Card>
   );
 }
-

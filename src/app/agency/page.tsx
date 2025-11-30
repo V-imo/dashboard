@@ -1,5 +1,5 @@
-import UpdateAgencyForm from "@/components/agency/update-agency-form";
-import AgencyDisplay from "@/components/agency/agency-display";
+import UpdateAgencyForm from "@/components/agency/update-form";
+import AgencyDisplay from "@/components/agency/display";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { getAgency } from "@/lib/dashboard-mgt-bff/api";
 import { defaultId } from "@/protoype";

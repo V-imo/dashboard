@@ -1,6 +1,8 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { useDebounce } from "@/lib/hooks";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
@@ -20,26 +22,52 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "../ui/dialog";
-import { PlusIcon, TrashIcon, PencilIcon, DownloadIcon } from "lucide-react";
-import { Property, Model } from "@/lib/dashboard-mgt-bff";
-import { getModels } from "@/lib/dashboard-mgt-bff/api";
+import {
+  PlusIcon,
+  TrashIcon,
+  PencilIcon,
+  DownloadIcon,
+  Loader2,
+} from "lucide-react";
+import { Room, RoomElement, Model } from "@/lib/dashboard-mgt-bff";
+import {
+  getModels,
+  createRoom as createRoomApi,
+  updateRoom as updateRoomApi,
+  deleteRoom as deleteRoomApi,
+  createRoomElement as createRoomElementApi,
+  updateRoomElement as updateRoomElementApi,
+  deleteRoomElement as deleteRoomElementApi,
+} from "@/lib/dashboard-mgt-bff/api";
 import { defaultId } from "@/protoype";
 import { toast } from "sonner";
 import ElementManager from "./element-manager";
 
-export type Room = Property["rooms"][number];
-export type Element = Room["elements"][number];
-
 interface RoomsManagerProps {
+  propertyId: string;
   rooms: Room[];
-  onChange: (rooms: Room[]) => void;
+  roomElements: RoomElement[];
 }
 
-export default function RoomsManager({ rooms, onChange }: RoomsManagerProps) {
+export default function RoomsManager({
+  propertyId,
+  rooms: initialRooms,
+  roomElements: initialRoomElements,
+}: RoomsManagerProps) {
+  const router = useRouter();
   const [editingRoomName, setEditingRoomName] = useState<number | null>(null);
   const [importDialogOpen, setImportDialogOpen] = useState(false);
   const [models, setModels] = useState<Model[]>([]);
   const [loadingModels, setLoadingModels] = useState(false);
+  const [rooms, setRooms] = useState<Room[]>(initialRooms);
+  const [roomElements, setRoomElements] =
+    useState<RoomElement[]>(initialRoomElements);
+  const [loading, setLoading] = useState<Record<string, boolean>>({});
+
+  useEffect(() => {
+    setRooms(initialRooms);
+    setRoomElements(initialRoomElements);
+  }, [initialRooms, initialRoomElements]);
 
   useEffect(() => {
     if (importDialogOpen) {
@@ -60,63 +88,232 @@ export default function RoomsManager({ rooms, onChange }: RoomsManagerProps) {
     }
   };
 
-  const handleImportModel = (model: Model) => {
+  const handleImportModel = async (model: Model) => {
     if (!model.rooms || model.rooms.length === 0) {
       toast.error("This model has no rooms to import");
       return;
     }
-    // Merge imported rooms with existing rooms
-    onChange([...rooms, ...model.rooms]);
-    toast.success(
-      `Imported ${model.rooms.length} room(s) from "${model.name}"`
+
+    try {
+      setLoading({ import: true });
+      // Create rooms and elements via API
+      for (const modelRoom of model.rooms) {
+        const roomId = await createRoomApi({
+          agencyId: defaultId,
+          propertyId,
+          name: modelRoom.name,
+          description: modelRoom.description,
+          area: modelRoom.area,
+        } as Omit<Room, "roomId">);
+
+        // Create elements for this room
+        if (modelRoom.elements && typeof roomId === "string") {
+          for (const modelElement of modelRoom.elements) {
+            await createRoomElementApi({
+              agencyId: defaultId,
+              propertyId,
+              roomId: roomId,
+              name: modelElement.name,
+              description: modelElement.description,
+              type: modelElement.type as RoomElement["type"],
+            } as Omit<RoomElement, "elementId">);
+          }
+        }
+      }
+      toast.success(
+        `Imported ${model.rooms.length} room(s) from "${model.name}"`
+      );
+      setImportDialogOpen(false);
+      router.refresh(); // Refresh to get updated data
+    } catch (error) {
+      toast.error("Failed to import model");
+      console.error(error);
+    } finally {
+      setLoading({ import: false });
+    }
+  };
+
+  const addRoom = async () => {
+    try {
+      setLoading({ addRoom: true });
+      const roomId = await createRoomApi({
+        agencyId: defaultId,
+        propertyId,
+        name: "",
+        description: "",
+        area: undefined,
+      } as Omit<Room, "roomId">);
+      if (typeof roomId === "string") {
+        const newRoom: Room = {
+          roomId,
+          agencyId: defaultId,
+          propertyId,
+          name: "",
+          description: "",
+          area: undefined,
+        };
+        const newRooms = [...rooms, newRoom];
+        setRooms(newRooms);
+        // Set editing state to the new room's index (last index)
+        setEditingRoomName(newRooms.length - 1);
+        router.refresh();
+      }
+    } catch (error) {
+      toast.error("Failed to create room");
+      console.error(error);
+    } finally {
+      setLoading({ addRoom: false });
+    }
+  };
+
+  // Create debounced update function for rooms
+  const debouncedUpdateRoom = useDebounce(
+    (args: { room: Room; updates: Partial<Room> }) => {
+      const { room, updates } = args;
+      const updatedRoom = { ...room, ...updates };
+      setLoading({ [`update-${room.roomId}`]: true });
+      updateRoomApi(updatedRoom)
+        .then(() => {
+          router.refresh();
+        })
+        .catch((error) => {
+          toast.error("Failed to update room");
+          console.error(error);
+          // Revert on error
+          setRooms((prevRooms) =>
+            prevRooms.map((r) => (r.roomId === room.roomId ? room : r))
+          );
+        })
+        .finally(() => {
+          setLoading({ [`update-${room.roomId}`]: false });
+        });
+    },
+    1000
+  );
+
+  const updateRoom = (room: Room, updates: Partial<Room>) => {
+    // Update local state immediately for responsive UI
+    const updatedRoom = { ...room, ...updates };
+    setRooms((prevRooms) =>
+      prevRooms.map((r) => (r.roomId === room.roomId ? updatedRoom : r))
     );
-    setImportDialogOpen(false);
+
+    // Debounce API call
+    debouncedUpdateRoom({ room, updates });
   };
 
-  const addRoom = () => {
-    setEditingRoomName(rooms.length);
-    onChange([
-      ...rooms,
-      { name: "", description: "", area: undefined, elements: [] },
-    ]);
+  const removeRoom = async (room: Room) => {
+    try {
+      setLoading({ [`delete-${room.roomId}`]: true });
+      // Delete all elements first
+      const elementsToDelete = roomElements.filter(
+        (e) => e.roomId === room.roomId
+      );
+      for (const element of elementsToDelete) {
+        await deleteRoomElementApi(propertyId, room.roomId, element.elementId);
+      }
+      // Then delete room
+      await deleteRoomApi(propertyId, room.roomId);
+      setRooms(rooms.filter((r) => r.roomId !== room.roomId));
+      setRoomElements(roomElements.filter((e) => e.roomId !== room.roomId));
+      router.refresh();
+    } catch (error) {
+      toast.error("Failed to delete room");
+      console.error(error);
+    } finally {
+      setLoading({ [`delete-${room.roomId}`]: false });
+    }
   };
 
-  const updateRoom = (roomIndex: number, updates: Partial<Room>) => {
-    const updatedRooms = [...rooms];
-    updatedRooms[roomIndex] = { ...updatedRooms[roomIndex], ...updates };
-    onChange(updatedRooms);
+  const addElement = async (room: Room) => {
+    try {
+      setLoading({ [`add-element-${room.roomId}`]: true });
+      const elementId = await createRoomElementApi({
+        agencyId: defaultId,
+        propertyId,
+        roomId: room.roomId,
+        name: "",
+        description: "",
+        type: "OTHER",
+      } as Omit<RoomElement, "elementId">);
+      if (typeof elementId === "string") {
+        const newElement: RoomElement = {
+          elementId,
+          agencyId: defaultId,
+          propertyId,
+          roomId: room.roomId,
+          name: "",
+          description: "",
+          type: "OTHER",
+        };
+        setRoomElements([...roomElements, newElement]);
+        router.refresh();
+      }
+    } catch (error) {
+      toast.error("Failed to create element");
+      console.error(error);
+    } finally {
+      setLoading({ [`add-element-${room.roomId}`]: false });
+    }
   };
 
-  const addElement = (roomIndex: number) => {
-    const updatedRooms = [...rooms];
-    updatedRooms[roomIndex].elements.push({
-      name: "",
-      description: "",
-      type: "OTHER",
-      images: [],
-    });
-    onChange(updatedRooms);
-  };
-
-  const removeElement = (roomIndex: number, elementIndex: number) => {
-    const updatedRooms = [...rooms];
-    updatedRooms[roomIndex].elements = updatedRooms[roomIndex].elements.filter(
-      (_, index) => index !== elementIndex
-    );
-    onChange(updatedRooms);
-  };
+  // Create debounced update function for elements
+  const debouncedUpdateElement = useDebounce(
+    (args: { element: RoomElement; updates: Partial<RoomElement> }) => {
+      const { element, updates } = args;
+      const updatedElement = { ...element, ...updates };
+      setLoading({ [`update-element-${element.elementId}`]: true });
+      updateRoomElementApi(updatedElement)
+        .then(() => {
+          router.refresh();
+        })
+        .catch((error) => {
+          toast.error("Failed to update element");
+          console.error(error);
+          // Revert on error
+          setRoomElements((prevElements) =>
+            prevElements.map((e) =>
+              e.elementId === element.elementId ? element : e
+            )
+          );
+        })
+        .finally(() => {
+          setLoading({ [`update-element-${element.elementId}`]: false });
+        });
+    },
+    1000
+  );
 
   const updateElement = (
-    roomIndex: number,
-    elementIndex: number,
-    updates: Partial<Element>
+    element: RoomElement,
+    updates: Partial<RoomElement>
   ) => {
-    const updatedRooms = [...rooms];
-    updatedRooms[roomIndex].elements[elementIndex] = {
-      ...updatedRooms[roomIndex].elements[elementIndex],
-      ...updates,
-    };
-    onChange(updatedRooms);
+    // Update local state immediately for responsive UI
+    const updatedElement = { ...element, ...updates };
+    setRoomElements((prevElements) =>
+      prevElements.map((e) =>
+        e.elementId === element.elementId ? updatedElement : e
+      )
+    );
+
+    // Debounce API call
+    debouncedUpdateElement({ element, updates });
+  };
+
+  const removeElement = async (element: RoomElement) => {
+    try {
+      setLoading({ [`delete-element-${element.elementId}`]: true });
+      await deleteRoomElementApi(propertyId, element.roomId, element.elementId);
+      setRoomElements(
+        roomElements.filter((e) => e.elementId !== element.elementId)
+      );
+      router.refresh();
+    } catch (error) {
+      toast.error("Failed to delete element");
+      console.error(error);
+    } finally {
+      setLoading({ [`delete-element-${element.elementId}`]: false });
+    }
   };
 
   return (
@@ -136,8 +333,12 @@ export default function RoomsManager({ rooms, onChange }: RoomsManagerProps) {
                 onOpenChange={setImportDialogOpen}
               >
                 <DialogTrigger asChild>
-                  <Button variant="outline" size="sm">
-                    <DownloadIcon className="w-4 h-4 mr-2" />
+                  <Button variant="outline" size="sm" disabled={loading.import}>
+                    {loading.import ? (
+                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                    ) : (
+                      <DownloadIcon className="w-4 h-4 mr-2" />
+                    )}
                     Import Model
                   </Button>
                 </DialogTrigger>
@@ -165,7 +366,11 @@ export default function RoomsManager({ rooms, onChange }: RoomsManagerProps) {
                           variant="outline"
                           className="justify-start"
                           onClick={() => handleImportModel(model)}
-                          disabled={!model.rooms || model.rooms.length === 0}
+                          disabled={
+                            !model.rooms ||
+                            model.rooms.length === 0 ||
+                            loading.import
+                          }
                         >
                           <div className="flex flex-col items-start">
                             <span className="font-medium">{model.name}</span>
@@ -187,8 +392,17 @@ export default function RoomsManager({ rooms, onChange }: RoomsManagerProps) {
                   </DialogFooter>
                 </DialogContent>
               </Dialog>
-              <Button onClick={addRoom} variant="outline" size="sm">
-                <PlusIcon className="w-4 h-4 mr-2" />
+              <Button
+                onClick={addRoom}
+                variant="outline"
+                size="sm"
+                disabled={loading.addRoom}
+              >
+                {loading.addRoom ? (
+                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                ) : (
+                  <PlusIcon className="w-4 h-4 mr-2" />
+                )}
                 Add Room
               </Button>
             </div>
@@ -203,9 +417,12 @@ export default function RoomsManager({ rooms, onChange }: RoomsManagerProps) {
             rooms.map((room, roomIndex) => {
               const isEditingName = editingRoomName === roomIndex;
               const showNameInput = !room.name || isEditingName;
+              const roomElementsForRoom = roomElements.filter(
+                (e) => e.roomId === room.roomId
+              );
 
               return (
-                <Card key={roomIndex} className="border-2">
+                <Card key={room.roomId} className="border-2">
                   <CardHeader>
                     <div className="flex items-center justify-between gap-2">
                       {showNameInput ? (
@@ -214,7 +431,7 @@ export default function RoomsManager({ rooms, onChange }: RoomsManagerProps) {
                           type="text"
                           value={room.name}
                           onChange={(e) =>
-                            updateRoom(roomIndex, { name: e.target.value })
+                            updateRoom(room, { name: e.target.value })
                           }
                           onBlur={() => {
                             if (room.name.trim()) {
@@ -244,15 +461,16 @@ export default function RoomsManager({ rooms, onChange }: RoomsManagerProps) {
                           </Button>
                         )}
                         <Button
-                          onClick={() =>
-                            onChange(
-                              rooms.filter((_, index) => index !== roomIndex)
-                            )
-                          }
+                          onClick={() => removeRoom(room)}
                           variant="destructive"
                           size="sm"
+                          disabled={loading[`delete-${room.roomId}`]}
                         >
-                          <TrashIcon className="w-4 h-4 mr-2" />
+                          {loading[`delete-${room.roomId}`] ? (
+                            <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                          ) : (
+                            <TrashIcon className="w-4 h-4 mr-2" />
+                          )}
                           Remove Room
                         </Button>
                       </div>
@@ -269,7 +487,7 @@ export default function RoomsManager({ rooms, onChange }: RoomsManagerProps) {
                           type="text"
                           value={room.description || ""}
                           onChange={(e) =>
-                            updateRoom(roomIndex, {
+                            updateRoom(room, {
                               description: e.target.value,
                             })
                           }
@@ -285,7 +503,7 @@ export default function RoomsManager({ rooms, onChange }: RoomsManagerProps) {
                           type="number"
                           value={room.area || ""}
                           onChange={(e) =>
-                            updateRoom(roomIndex, {
+                            updateRoom(room, {
                               area: e.target.value
                                 ? parseFloat(e.target.value)
                                 : undefined,
@@ -300,37 +518,36 @@ export default function RoomsManager({ rooms, onChange }: RoomsManagerProps) {
 
                     <div className="flex flex-col gap-3">
                       <div className="flex items-center justify-between">
-                        <Label>
-                          Elements
-                        </Label>
+                        <Label>Elements</Label>
                         <Button
-                          onClick={() => addElement(roomIndex)}
+                          onClick={() => addElement(room)}
                           variant="outline"
                           size="sm"
+                          disabled={loading[`add-element-${room.roomId}`]}
                         >
-                          <PlusIcon className="w-4 h-4 mr-2" />
+                          {loading[`add-element-${room.roomId}`] ? (
+                            <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                          ) : (
+                            <PlusIcon className="w-4 h-4 mr-2" />
+                          )}
                           Add Element
                         </Button>
                       </div>
 
-                      {room.elements.length === 0 ? (
+                      {roomElementsForRoom.length === 0 ? (
                         <div className="text-sm text-muted-foreground py-4 text-center border rounded-md">
                           No elements added. Click "Add Element" to add one.
                         </div>
                       ) : (
                         <div className="flex flex-col gap-3">
-                          {room.elements.map((element, elementIndex) => (
+                          {roomElementsForRoom.map((element) => (
                             <ElementManager
-                              key={elementIndex}
+                              key={element.elementId}
                               element={element}
-                              elementIndex={elementIndex}
-                              roomIndex={roomIndex}
                               onUpdate={(updates) =>
-                                updateElement(roomIndex, elementIndex, updates)
+                                updateElement(element, updates)
                               }
-                              onRemove={() =>
-                                removeElement(roomIndex, elementIndex)
-                              }
+                              onRemove={() => removeElement(element)}
                             />
                           ))}
                         </div>

@@ -1,6 +1,10 @@
-import UpdatePropertyForm from "@/components/property/property-page";
-import PropertyDisplay from "@/components/property/property-display";
-import { getProperty } from "@/lib/dashboard-mgt-bff/api";
+import UpdatePropertyForm from "@/components/property/update-form";
+import PropertyDisplay from "@/components/property/display";
+import {
+  getProperty,
+  getRooms,
+  getRoomElementsByProperty,
+} from "@/lib/dashboard-mgt-bff/api";
 import { defaultId } from "@/protoype";
 import { notFound } from "next/navigation";
 import Link from "next/link";
@@ -24,6 +28,8 @@ export default async function PropertyPage({
     if (!property) {
       notFound();
     }
+    const rooms = await getRooms(propertyId);
+    const roomElements = await getRoomElementsByProperty(propertyId);
     return (
       <div className="flex flex-col items-center justify-center w-full gap-6">
         <div className="flex justify-end gap-2 w-full max-w-4xl">
@@ -33,7 +39,7 @@ export default async function PropertyPage({
               See Inspections
             </Link>
           </Button>
-          <CreateModelFromPropertyButton property={property} />
+          <CreateModelFromPropertyButton property={property} rooms={rooms || []} roomElements={roomElements || []} />
           <Button asChild size="lg">
             <Link href={`/property/${propertyId}/inspection/new`}>
               <PlusIcon className="w-4 h-4 mr-2" />
@@ -57,9 +63,17 @@ export default async function PropertyPage({
           )}
         </div>
         {isEditMode ? (
-          <UpdatePropertyForm property={property} />
+          <UpdatePropertyForm
+            property={property}
+            rooms={rooms || []}
+            roomElements={roomElements || []}
+          />
         ) : (
-          <PropertyDisplay property={property} />
+          <PropertyDisplay
+            property={property}
+            rooms={rooms || []}
+            roomElements={roomElements || []}
+          />
         )}
       </div>
     );

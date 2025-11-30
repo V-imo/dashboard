@@ -1,7 +1,7 @@
-import { getInspections, getProperties } from "@/lib/dashboard-mgt-bff/api";
+import { getInspections, getProperties, getRoomElementsByProperty, getRooms } from "@/lib/dashboard-mgt-bff/api";
 import { defaultId } from "@/protoype";
 import Link from "next/link";
-import InspectionStatusBadge from "@/components/inspection/inspection-status-badge";
+import InspectionStatusBadge from "@/components/inspection/status-badge";
 import {
   Table,
   TableBody,

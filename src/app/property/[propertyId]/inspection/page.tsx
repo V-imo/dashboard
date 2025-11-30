@@ -5,7 +5,7 @@ import {
 import { defaultId } from "@/protoype";
 import { ArrowLeftIcon } from "lucide-react";
 import Link from "next/link";
-import InspectionStatusBadge from "@/components/inspection/inspection-status-badge";
+import InspectionStatusBadge from "@/components/inspection/status-badge";
 
 export default async function PropertyInspectionsPage({
   params,

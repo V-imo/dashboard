@@ -1,4 +1,4 @@
-import { Agency, client, Inspection, Model, Property } from "./index";
+import { Agency, client, Inspection, Model, Property, Room, RoomElement } from "./index";
 
 export const getInspections = async (agencyId: string) => {
   const response = await client.GET("/inspection/{agencyId}", {
@@ -167,6 +167,98 @@ export const deleteModel = async (agencyId: string, modelId: string) => {
   const response = await client.DELETE("/model/{agencyId}/{modelId}", {
     params: {
       path: { agencyId, modelId },
+    },
+  });
+  return response.data;
+};
+
+
+export const getRooms = async (propertyId: string) => {
+  const response = await client.GET("/room/{propertyId}", {
+    params: {
+      path: { propertyId },
+    },
+  });
+  return response.data;
+};
+
+export const createRoom = async (room: Omit<Room, "roomId">) => {
+  const response = await client.POST("/room", {
+    body: room,
+  });
+  return response.data;
+};
+
+export const updateRoom = async (room: Room) => {
+  const response = await client.PATCH("/room", {
+    body: room,
+  });
+  return response.data;
+};
+
+export const deleteRoom = async (propertyId: string, roomId: string) => {
+  const response = await client.DELETE("/room/{propertyId}/{roomId}", {
+    params: {
+      path: { propertyId, roomId },
+    },
+  });
+  return response.data;
+};
+
+export const getRoom = async (propertyId: string, roomId: string) => {
+  const response = await client.GET("/room/{propertyId}/{roomId}", {
+    params: {
+      path: { propertyId, roomId },
+    },
+  });
+  return response.data;
+};
+
+export const updateRoomElement = async (roomElement: RoomElement) => {
+  const response = await client.PATCH("/room-element", {
+    body: roomElement,
+  });
+  return response.data;
+};
+
+export const deleteRoomElement = async (propertyId: string, roomId: string, elementId: string) => {
+  const response = await client.DELETE("/room-element/{propertyId}/{roomId}/{elementId}", {
+    params: {
+      path: { propertyId, roomId, elementId },
+    },
+  });
+  return response.data;
+};
+
+export const getRoomElement = async (propertyId: string, roomId: string, elementId: string) => {
+  const response = await client.GET("/room-element/{propertyId}/{roomId}/{elementId}", {
+    params: {
+      path: { propertyId, roomId, elementId },
+    },
+  });
+  return response.data;
+};
+
+export const createRoomElement = async (roomElement: Omit<RoomElement, "elementId">) => {
+  const response = await client.POST("/room-element", {
+    body: roomElement,
+  });
+  return response.data;
+};
+
+export const getRoomElementsByProperty = async (propertyId: string) => {
+  const response = await client.GET("/room-element/{propertyId}", {
+    params: {
+      path: { propertyId },
+    },
+  });
+  return response.data;
+};
+
+export const getRoomElementsByRoom = async (propertyId: string, roomId: string) => {
+  const response = await client.GET("/room-element/{propertyId}/{roomId}", {
+    params: {
+      path: { propertyId, roomId },
     },
   });
   return response.data;

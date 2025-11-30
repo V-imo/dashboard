@@ -1,6 +1,11 @@
-import UpdateInspectionForm from "@/components/inspection/update-inspection-form";
-import InspectionDisplay from "@/components/inspection/inspection-display";
-import { getInspection, getProperty } from "@/lib/dashboard-mgt-bff/api";
+import UpdateInspectionForm from "@/components/inspection/update-form";
+import InspectionDisplay from "@/components/inspection/display";
+import {
+  getInspection,
+  getProperty,
+  getRooms,
+  getRoomElementsByProperty,
+} from "@/lib/dashboard-mgt-bff/api";
 import { defaultId } from "@/protoype";
 import { HouseIcon, PencilIcon, XIcon } from "lucide-react";
 import Link from "next/link";
@@ -19,9 +24,11 @@ export default async function InspectionPage({
   const isEditMode = edit === "true";
 
   try {
-    const [inspection, property] = await Promise.all([
+    const [inspection, property, rooms, roomElements] = await Promise.all([
       getInspection(defaultId, propertyId, inspectionId),
       getProperty(defaultId, propertyId),
+      getRooms(propertyId),
+      getRoomElementsByProperty(propertyId),
     ]);
 
     if (!inspection || !property) {
@@ -56,9 +63,19 @@ export default async function InspectionPage({
           )}
         </div>
         {isEditMode ? (
-          <UpdateInspectionForm inspection={inspection} property={property} />
+          <UpdateInspectionForm
+            inspection={inspection}
+            property={property}
+            propertyRooms={rooms || []}
+            propertyRoomElements={roomElements || []}
+          />
         ) : (
-          <InspectionDisplay inspection={inspection} property={property} />
+          <InspectionDisplay
+            inspection={inspection}
+            property={property}
+            propertyRooms={rooms || []}
+            propertyRoomElements={roomElements || []}
+          />
         )}
       </div>
     );

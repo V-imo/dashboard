@@ -39,7 +39,7 @@ export default function CreateInspectionForm(props: {
     status: "TO_DO",
     date: "",
     inspectorId: "",
-    rooms: [],
+    elements: undefined,
   });
 
   const submit = async () => {

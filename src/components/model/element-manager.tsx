@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState } from "react";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
@@ -23,10 +23,17 @@ import {
   Square,
   Package,
 } from "lucide-react";
-import { RoomElement } from "@/lib/dashboard-mgt-bff";
-import { useDebounce } from "@/lib/hooks";
+import { Model } from "@/lib/dashboard-mgt-bff";
 
-export type ElementType = RoomElement["type"];
+type ModelElement = Model["rooms"][number]["elements"][number];
+type ElementType =
+  | "FURNITURE"
+  | "STRUCTURAL"
+  | "ELECTRICAL"
+  | "PLUMBING"
+  | "VENTILATION"
+  | "SURFACE"
+  | "OTHER";
 
 const elementTypeConfig: Record<
   ElementType,
@@ -41,90 +48,45 @@ const elementTypeConfig: Record<
   OTHER: { label: "Other", icon: Package },
 };
 
-interface ElementManagerProps {
-  element: RoomElement;
-  onUpdate: (updates: Partial<RoomElement>) => void;
+interface ModelElementManagerProps {
+  element: ModelElement;
+  onUpdate: (updates: Partial<ModelElement>) => void;
   onRemove: () => void;
 }
 
-export default function ElementManager({
+export default function ModelElementManager({
   element,
   onUpdate,
   onRemove,
-}: ElementManagerProps) {
-  // Local state for immediate UI updates
-  const [localName, setLocalName] = useState(element.name);
-  const [localDescription, setLocalDescription] = useState(
-    element.description || ""
-  );
+}: ModelElementManagerProps) {
   const [isEditingName, setIsEditingName] = useState(
     element.name === "" ? true : false
   );
-  const showNameInput = !localName || isEditingName;
-  const pendingUpdatesRef = useRef<Partial<RoomElement>>({});
-
-  // Sync local state with props when element changes
-  useEffect(() => {
-    setLocalName(element.name);
-    setLocalDescription(element.description || "");
-  }, [element.name, element.description]);
-
-  // Store onUpdate in ref to avoid dependency issues
-  const onUpdateRef = useRef(onUpdate);
-  useEffect(() => {
-    onUpdateRef.current = onUpdate;
-  }, [onUpdate]);
-
-  // Debounced update function that merges multiple updates
-  const debouncedUpdate = useDebounce(() => {
-    if (Object.keys(pendingUpdatesRef.current).length > 0) {
-      onUpdateRef.current(pendingUpdatesRef.current);
-      pendingUpdatesRef.current = {};
-    }
-  }, 1000);
-
-  const handleUpdate = (updates: Partial<RoomElement>) => {
-    // Merge with pending updates
-    pendingUpdatesRef.current = { ...pendingUpdatesRef.current, ...updates };
-    // Trigger debounced update
-    debouncedUpdate();
-  };
-
-  // Cleanup on unmount - flush any pending updates
-  useEffect(() => {
-    return () => {
-      if (Object.keys(pendingUpdatesRef.current).length > 0) {
-        onUpdateRef.current(pendingUpdatesRef.current);
-      }
-    };
-  }, []);
+  const showNameInput = !element.name || isEditingName;
 
   return (
     <Card className="bg-muted/50 border">
       <CardHeader>
         <div className="flex items-center gap-2">
           <TypeSelector
-            type={element.type as ElementType}
-            onUpdate={(type) => handleUpdate({ type })}
+            type={(element.type || "OTHER") as ElementType}
+            onUpdate={(type) => onUpdate({ type })}
           />
           <div className="flex justify-between w-full">
             <div className="ml-3 w-fit">
               {showNameInput ? (
                 <Input
-                  id={`element-${element.elementId}-name`}
+                  id={`element-${element.name}-name`}
                   type="text"
-                  value={localName}
-                  onChange={(e) => {
-                    setLocalName(e.target.value);
-                    handleUpdate({ name: e.target.value });
-                  }}
+                  value={element.name}
+                  onChange={(e) => onUpdate({ name: e.target.value })}
                   onBlur={() => {
-                    if (localName.trim()) {
+                    if (element.name.trim()) {
                       setIsEditingName(false);
                     }
                   }}
                   onKeyDown={(e) => {
-                    if (e.key === "Enter" && localName.trim()) {
+                    if (e.key === "Enter" && element.name.trim()) {
                       setIsEditingName(false);
                     }
                   }}
@@ -134,7 +96,7 @@ export default function ElementManager({
                 />
               ) : (
                 <CardTitle className="text-base w-fit min-w-0">
-                  {localName}
+                  {element.name}
                 </CardTitle>
               )}
             </div>
@@ -157,17 +119,14 @@ export default function ElementManager({
       </CardHeader>
       <CardContent className="p-4 flex flex-col gap-3">
         <div>
-          <Label htmlFor={`element-${element.elementId}-description`}>
+          <Label htmlFor={`element-${element.name}-description`}>
             Description
           </Label>
           <Input
-            id={`element-${element.elementId}-description`}
+            id={`element-${element.name}-description`}
             type="text"
-            value={localDescription}
-            onChange={(e) => {
-              setLocalDescription(e.target.value);
-              handleUpdate({ description: e.target.value });
-            }}
+            value={element.description || ""}
+            onChange={(e) => onUpdate({ description: e.target.value })}
             placeholder="Element description (optional)"
           />
         </div>
@@ -219,3 +178,4 @@ const TypeSelector = ({
     </Select>
   );
 };
+

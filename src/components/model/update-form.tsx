@@ -17,7 +17,7 @@ import {
 } from "../ui/card";
 import { toast } from "sonner";
 import { Loader2, TrashIcon, PencilIcon } from "lucide-react";
-import RoomsManager from "../shared/rooms-manager";
+import ModelRoomsManager from "./rooms-manager";
 
 export default function UpdateModelForm(props: { model?: Model }) {
   const router = useRouter();
@@ -129,7 +129,7 @@ export default function UpdateModelForm(props: { model?: Model }) {
       </Card>
 
       {/* Rooms Section */}
-      <RoomsManager
+      <ModelRoomsManager
         rooms={model.rooms || []}
         onChange={(rooms) => setModel({ ...model, rooms })}
       />

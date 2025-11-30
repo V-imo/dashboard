@@ -1,8 +1,8 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { updateProperty } from "@/lib/dashboard-mgt-bff/api";
+import { createProperty } from "@/lib/dashboard-mgt-bff/api";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import { Label } from "../ui/label";
@@ -22,52 +22,82 @@ import {
 } from "../ui/select";
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
-import { Property } from "@/lib/dashboard-mgt-bff";
-import DeletePropertyButton from "./delete-property-button";
-import RoomsManager from "../shared/rooms-manager";
+import { defaultId } from "@/protoype";
+import { Model, Property, RoomElement } from "@/lib/dashboard-mgt-bff";
+import { createRoom, createRoomElement } from "@/lib/dashboard-mgt-bff/api";
 
-export default function UpdatePropertyForm(props: { property?: Property }) {
+export default function CreatePropertyForm({ models }: { models: Model[] }) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
-  const [property, setProperty] = useState<Property>(
-    props.property || {
-      propertyId: "",
-      agencyId: "",
-      address: {
-        number: "",
-        street: "",
-        city: "",
-        zipCode: "",
-        country: "",
-      },
-      owner: {
-        firstName: "",
-        lastName: "",
-        mail: "",
-        phoneNumber: "",
-      },
-      rooms: [],
-    }
+  const [selectedModelId, setSelectedModelId] = useState<string | undefined>(
+    undefined
   );
-
-  useEffect(() => {
-    if (props.property) {
-      setProperty(props.property);
-    }
-  }, [props.property]);
+  const [property, setProperty] = useState<Omit<Property, "propertyId">>({
+    agencyId: defaultId,
+    address: {
+      number: "",
+      street: "",
+      city: "",
+      zipCode: "",
+      country: "",
+    },
+    owner: {
+      firstName: "",
+      lastName: "",
+      mail: "",
+      phoneNumber: "",
+    },
+  });
 
   const submit = async () => {
     try {
       setLoading(true);
-      // Ensure propertyId is preserved and never updated
-      await updateProperty({
-        ...property,
-        propertyId: props.property?.propertyId || property.propertyId,
-      });
-      toast.success("Property updated successfully");
-      router.refresh(); // This will re-fetch the server-side data
+      const propertyId = await createProperty(property as Property);
+
+      // If a model is selected, import its rooms and elements
+      if (selectedModelId && selectedModelId !== "none") {
+        const selectedModel = models.find((m) => m.modelId === selectedModelId);
+        if (selectedModel && selectedModel.rooms && propertyId) {
+          try {
+            // Create rooms and elements from model
+            for (const modelRoom of selectedModel.rooms) {
+              const roomId = await createRoom({
+                agencyId: defaultId,
+                propertyId,
+                name: modelRoom.name,
+                description: modelRoom.description,
+                area: modelRoom.area,
+              });
+
+              // Create elements for this room
+              if (modelRoom.elements && typeof roomId === "string") {
+                for (const modelElement of modelRoom.elements) {
+                  await createRoomElement({
+                    agencyId: defaultId,
+                    propertyId,
+                    roomId: roomId,
+                    name: modelElement.name,
+                    description: modelElement.description,
+                    type: modelElement.type as RoomElement["type"],
+                  } as Omit<RoomElement, "elementId">);
+                }
+              }
+            }
+            toast.success(
+              `Property created and ${selectedModel.rooms.length} room(s) imported from model`
+            );
+          } catch (error) {
+            toast.error("Property created but failed to import model rooms");
+            console.error(error);
+          }
+        }
+      } else {
+        toast.success("Property created successfully");
+      }
+
+      router.push(`/property/${propertyId}`);
     } catch (error) {
-      toast.error("Failed to update property");
+      toast.error("Failed to create property");
       console.error(error);
     } finally {
       setLoading(false);
@@ -81,7 +111,7 @@ export default function UpdatePropertyForm(props: { property?: Property }) {
         <CardHeader>
           <CardTitle>Property Address</CardTitle>
           <CardDescription>
-            Update the address details of the property
+            Enter the address details of the property
           </CardDescription>
         </CardHeader>
         <CardContent className="flex flex-col gap-4">
@@ -196,7 +226,7 @@ export default function UpdatePropertyForm(props: { property?: Property }) {
         <CardHeader>
           <CardTitle>Property Owner</CardTitle>
           <CardDescription>
-            Update the contact information of the property owner
+            Enter the contact information of the property owner
           </CardDescription>
         </CardHeader>
         <CardContent className="flex flex-col gap-4">
@@ -280,23 +310,48 @@ export default function UpdatePropertyForm(props: { property?: Property }) {
         </CardContent>
       </Card>
 
-      {/* Rooms Section */}
-      <RoomsManager
-        rooms={property.rooms || []}
-        onChange={(rooms) => setProperty({ ...property, rooms })}
-      />
+      {/* Model Import Section */}
+      {models.length > 0 && (
+        <Card>
+          <CardHeader>
+            <CardTitle>Import from Model (Optional)</CardTitle>
+            <CardDescription>
+              Select a model to automatically import its rooms and elements
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Select
+              value={selectedModelId || undefined}
+              onValueChange={(value) =>
+                setSelectedModelId(value === "none" ? undefined : value)
+              }
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Select a model (optional)" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="none">None</SelectItem>
+                {models.map((model) => (
+                  <SelectItem key={model.modelId} value={model.modelId}>
+                    {model.name} ({model.rooms?.length || 0} rooms)
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </CardContent>
+        </Card>
+      )}
 
       {/* Submit Button */}
-      <div className="flex justify-end gap-2">
-        <DeletePropertyButton propertyId={property.propertyId} />
-        <Button onClick={submit} size="lg">
+      <div className="flex justify-end">
+        <Button onClick={submit} size="lg" disabled={loading}>
           {loading ? (
             <>
               <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-              Updating...
+              Creating...
             </>
           ) : (
-            "Update Property"
+            "Create Property"
           )}
         </Button>
       </div>

@@ -1,16 +1,13 @@
 import { cn } from "@/lib/utils";
 
-type ElementState = "GOOD" | "BAD" | "NEW" | "BROKEN";
+type ElementState = "GOOD" | "BAD" | "NEW" | "BROKEN" | "MISSING";
 
 interface ElementStateBadgeProps {
   state: ElementState;
   className?: string;
 }
 
-const stateConfig: Record<
-  ElementState,
-  { label: string; variant: string }
-> = {
+const stateConfig: Record<ElementState, { label: string; variant: string }> = {
   GOOD: {
     label: "Good",
     variant:
@@ -30,6 +27,11 @@ const stateConfig: Record<
     label: "Broken",
     variant:
       "bg-orange-100 text-orange-800 border-orange-300 dark:bg-orange-900/20 dark:text-orange-400 dark:border-orange-800",
+  },
+  MISSING: {
+    label: "Missing",
+    variant:
+      "bg-gray-100 text-gray-800 border-gray-300 dark:bg-gray-900/20 dark:text-gray-400 dark:border-gray-800",
   },
 };
 
@@ -51,5 +53,3 @@ export default function ElementStateBadge({
     </span>
   );
 }
-
-

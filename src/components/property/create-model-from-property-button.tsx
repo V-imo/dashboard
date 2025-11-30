@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { createModel } from "@/lib/dashboard-mgt-bff/api";
-import { Property } from "@/lib/dashboard-mgt-bff";
+import { Property, Room, RoomElement } from "@/lib/dashboard-mgt-bff";
 import { defaultId } from "@/protoype";
 import { Button } from "../ui/button";
 import {
@@ -22,15 +22,56 @@ import { Loader2, CopyIcon } from "lucide-react";
 
 interface CreateModelFromPropertyButtonProps {
   property: Property;
+  rooms: Room[];
+  roomElements: RoomElement[];
 }
 
 export default function CreateModelFromPropertyButton({
   property,
+  rooms,
+  roomElements,
 }: CreateModelFromPropertyButtonProps) {
   const router = useRouter();
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [modelName, setModelName] = useState("");
+
+  const transformToModelRooms = (): {
+    name: string;
+    area?: number;
+    description?: string;
+    elements: {
+      name: string;
+      description?: string;
+      images?: string[];
+      type: string;
+    }[];
+  }[] => {
+    // Group room elements by roomId
+    const elementsByRoomId = new Map<string, RoomElement[]>();
+    roomElements.forEach((element) => {
+      const existing = elementsByRoomId.get(element.roomId) || [];
+      existing.push(element);
+      elementsByRoomId.set(element.roomId, existing);
+    });
+
+    // Transform rooms to model format
+    return rooms.map((room) => {
+      const roomElements = elementsByRoomId.get(room.roomId) || [];
+
+      return {
+        name: room.name,
+        ...(room.area !== undefined && { area: room.area }),
+        ...(room.description && { description: room.description }),
+        elements: roomElements.map((element) => ({
+          name: element.name,
+          ...(element.description && { description: element.description }),
+          type: element.type,
+          // images is optional, we don't have it from RoomElement
+        })),
+      };
+    });
+  };
 
   const handleSubmit = async () => {
     if (!modelName.trim()) {
@@ -40,10 +81,11 @@ export default function CreateModelFromPropertyButton({
 
     try {
       setLoading(true);
+      const modelRooms = transformToModelRooms();
       await createModel({
         agencyId: defaultId,
         name: modelName.trim(),
-        rooms: property.rooms || [],
+        rooms: modelRooms,
       });
       toast.success("Model created successfully");
       setOpen(false);
@@ -99,7 +141,10 @@ export default function CreateModelFromPropertyButton({
           >
             Cancel
           </Button>
-          <Button onClick={handleSubmit} disabled={loading || !modelName.trim()}>
+          <Button
+            onClick={handleSubmit}
+            disabled={loading || !modelName.trim()}
+          >
             {loading ? (
               <>
                 <Loader2 className="w-4 h-4 mr-2 animate-spin" />
@@ -114,4 +159,3 @@ export default function CreateModelFromPropertyButton({
     </Dialog>
   );
 }
-

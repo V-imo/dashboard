@@ -47,7 +47,6 @@ export default async function PropertyPage() {
               <TableRow>
                 <TableHead>Owner</TableHead>
                 <TableHead>Address</TableHead>
-                <TableHead className="text-right">Rooms</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -75,14 +74,6 @@ export default async function PropertyPage() {
                         className="block w-full group-hover:underline"
                       >
                         {address}
-                      </Link>
-                    </TableCell>
-                    <TableCell className="text-right">
-                      <Link
-                        href={`/property/${property.propertyId}`}
-                        className="block w-full"
-                      >
-                        {property.rooms?.length || 0}
                       </Link>
                     </TableCell>
                   </TableRow>

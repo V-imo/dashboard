@@ -22,13 +22,20 @@ import {
 } from "../ui/select";
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
-import { Inspection, Property } from "@/lib/dashboard-mgt-bff";
-import DeleteInspectionButton from "./delete-inspection-button";
-import InspectionRoomsManager from "./inspection-rooms-manager";
+import {
+  Inspection,
+  Property,
+  Room,
+  RoomElement,
+} from "@/lib/dashboard-mgt-bff";
+import DeleteInspectionButton from "./delete-button";
+import InspectionRoomsManager from "./rooms-manager";
 
 export default function UpdateInspectionForm(props: {
   inspection?: Inspection;
   property?: Property;
+  propertyRooms?: Room[];
+  propertyRoomElements?: RoomElement[];
 }) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
@@ -40,7 +47,7 @@ export default function UpdateInspectionForm(props: {
       status: "TO_DO",
       date: "",
       inspectorId: "",
-      rooms: [],
+      elements: [],
     }
   );
 
@@ -152,12 +159,13 @@ export default function UpdateInspectionForm(props: {
         </CardContent>
       </Card>
 
-      {/* Inspection Rooms Section */}
-      {props.property && (
+      {/* Inspection Elements Section */}
+      {props.property && props.propertyRooms && props.propertyRoomElements && (
         <InspectionRoomsManager
-          propertyRooms={props.property.rooms || []}
-          inspectionRooms={inspection.rooms || []}
-          onChange={(rooms) => setInspection({ ...inspection, rooms })}
+          propertyRooms={props.propertyRooms}
+          propertyRoomElements={props.propertyRoomElements}
+          inspectionElements={inspection.elements || []}
+          onChange={(elements) => setInspection({ ...inspection, elements })}
         />
       )}
 
