@@ -8,7 +8,7 @@ import {
 import { Label } from "../ui/label";
 import { Inspection, Property } from "@/lib/dashboard-mgt-bff";
 import { Calendar, UserCheck, Home } from "lucide-react";
-import InspectionStatusBadge from "./inspection-status-badge";
+import InspectionStatusBadge from "./status-badge";
 import ElementStateBadge from "../shared/element-state-badge";
 import { getElementTypeConfig } from "../shared/element-type-icon";
 import { Badge } from "../ui/badge";
@@ -52,7 +52,9 @@ export default function InspectionDisplay({
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
             <div className="flex items-center gap-2">
               <Calendar className="w-5 h-5 text-muted-foreground" />
-              <CardTitle className="text-base sm:text-lg">Inspection Details</CardTitle>
+              <CardTitle className="text-base sm:text-lg">
+                Inspection Details
+              </CardTitle>
             </div>
             <InspectionStatusBadge status={inspection.status} />
           </div>
@@ -63,7 +65,9 @@ export default function InspectionDisplay({
             <Calendar className="w-5 h-5 text-muted-foreground mt-0.5 flex-shrink-0" />
             <div className="flex-1 min-w-0">
               <Label className="text-xs text-muted-foreground">Date</Label>
-              <p className="text-sm font-medium break-words">{inspectionDate}</p>
+              <p className="text-sm font-medium break-words">
+                {inspectionDate}
+              </p>
             </div>
           </div>
           {inspection.inspectorId && (
@@ -73,7 +77,9 @@ export default function InspectionDisplay({
                 <Label className="text-xs text-muted-foreground">
                   Inspector ID
                 </Label>
-                <p className="text-sm font-medium break-words">{inspection.inspectorId}</p>
+                <p className="text-sm font-medium break-words">
+                  {inspection.inspectorId}
+                </p>
               </div>
             </div>
           )}
@@ -86,7 +92,9 @@ export default function InspectionDisplay({
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
             <div className="flex items-center gap-2">
               <Home className="w-5 h-5 text-muted-foreground" />
-              <CardTitle className="text-base sm:text-lg">Inspection Rooms</CardTitle>
+              <CardTitle className="text-base sm:text-lg">
+                Inspection Rooms
+              </CardTitle>
             </div>
             <Badge variant="secondary" className="text-sm w-fit">
               {inspection.rooms?.length || 0} room
@@ -101,8 +109,9 @@ export default function InspectionDisplay({
           {inspection.rooms && inspection.rooms.length > 0 ? (
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
               {inspection.rooms.map((room, roomIndex) => {
-                const propertyElementTypes =
-                  propertyElementsByRoom.get(room.name);
+                const propertyElementTypes = propertyElementsByRoom.get(
+                  room.name
+                );
                 return (
                   <div
                     key={roomIndex}
@@ -110,7 +119,9 @@ export default function InspectionDisplay({
                   >
                     <div className="flex items-start justify-between gap-2">
                       <div className="flex-1 min-w-0">
-                        <h4 className="font-semibold text-base break-words">{room.name}</h4>
+                        <h4 className="font-semibold text-base break-words">
+                          {room.name}
+                        </h4>
                         {room.description && (
                           <p className="text-sm text-muted-foreground break-words">
                             {room.description}
@@ -118,7 +129,10 @@ export default function InspectionDisplay({
                         )}
                       </div>
                       {room.elements && room.elements.length > 0 && (
-                        <Badge variant="outline" className="text-xs flex-shrink-0">
+                        <Badge
+                          variant="outline"
+                          className="text-xs flex-shrink-0"
+                        >
                           {room.elements.length} element
                           {room.elements.length !== 1 ? "s" : ""}
                         </Badge>
@@ -133,8 +147,10 @@ export default function InspectionDisplay({
                           {room.elements.map((element, elementIndex) => {
                             // Try to get type from property, fallback to OTHER
                             const elementType =
-                              propertyElementTypes?.get(element.name) || "OTHER";
-                            const typeConfig = getElementTypeConfig(elementType);
+                              propertyElementTypes?.get(element.name) ||
+                              "OTHER";
+                            const typeConfig =
+                              getElementTypeConfig(elementType);
                             const Icon = typeConfig.icon;
                             return (
                               <div
@@ -148,7 +164,9 @@ export default function InspectionDisplay({
                                       {element.name}
                                     </p>
                                     {element.state && (
-                                      <ElementStateBadge state={element.state} />
+                                      <ElementStateBadge
+                                        state={element.state}
+                                      />
                                     )}
                                   </div>
                                   {element.description && (
@@ -177,4 +195,3 @@ export default function InspectionDisplay({
     </div>
   );
 }
-

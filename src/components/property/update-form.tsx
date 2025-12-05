@@ -23,7 +23,7 @@ import {
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
 import { Property } from "@/lib/dashboard-mgt-bff";
-import DeletePropertyButton from "./delete-property-button";
+import DeletePropertyButton from "./delete-button";
 import RoomsManager from "../shared/rooms-manager";
 
 export default function UpdatePropertyForm(props: { property?: Property }) {

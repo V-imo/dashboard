@@ -120,11 +120,11 @@ export function NavMenu() {
                 </NavigationMenuContent>
               </>
             ) : (
-              <Link href={page.href} passHref>
-                <NavigationMenuLink className={navigationMenuTriggerStyle()}>
+              <NavigationMenuLink asChild>
+                <Link href={page.href} className={navigationMenuTriggerStyle()}>
                   {page.name}
-                </NavigationMenuLink>
-              </Link>
+                </Link>
+              </NavigationMenuLink>
             )}
           </NavigationMenuItem>
         ))}

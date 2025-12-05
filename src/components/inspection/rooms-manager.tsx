@@ -20,7 +20,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../ui/select";
-import InspectionElementEditor from "./inspection-element-editor";
+import InspectionElementEditor from "./element-editor";
 
 type PropertyRoom = Property["rooms"][number];
 type PropertyElement = PropertyRoom["elements"][number];
