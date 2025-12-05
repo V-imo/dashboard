@@ -1,5 +1,5 @@
-import UpdateModelForm from "@/components/model/update-model-form";
-import ModelDisplay from "@/components/model/model-display";
+import UpdateModelForm from "@/components/model/update-form";
+import ModelDisplay from "@/components/model/display";
 import { getModel } from "@/lib/dashboard-mgt-bff/api";
 import { defaultId } from "@/protoype";
 import { notFound } from "next/navigation";

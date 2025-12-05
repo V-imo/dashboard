@@ -1,11 +1,11 @@
-import UpdatePropertyForm from "@/components/property/property-page";
-import PropertyDisplay from "@/components/property/property-display";
-import { getProperty } from "@/lib/dashboard-mgt-bff/api";
+import UpdatePropertyForm from "@/components/property/update-form";
+import PropertyDisplay from "@/components/property/display";
+import { getProperty, getPropertyInspections } from "@/lib/dashboard-mgt-bff/api";
 import { defaultId } from "@/protoype";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { PlusIcon, EyeIcon, PencilIcon, XIcon } from "lucide-react";
+import { PlusIcon, PencilIcon, XIcon } from "lucide-react";
 import CreateModelFromPropertyButton from "@/components/property/create-model-from-property-button";
 
 export default async function PropertyPage({
@@ -24,15 +24,10 @@ export default async function PropertyPage({
     if (!property) {
       notFound();
     }
+    const inspections = await getPropertyInspections(defaultId, propertyId);
     return (
       <div className="flex flex-col items-center justify-center w-full gap-6">
         <div className="flex justify-end gap-2 w-full max-w-4xl">
-          <Button asChild variant="outline" size="lg">
-            <Link href={`/property/${propertyId}/inspection`}>
-              <EyeIcon className="w-4 h-4 mr-2" />
-              See Inspections
-            </Link>
-          </Button>
           <CreateModelFromPropertyButton property={property} />
           <Button asChild size="lg">
             <Link href={`/property/${propertyId}/inspection/new`}>
@@ -59,7 +54,7 @@ export default async function PropertyPage({
         {isEditMode ? (
           <UpdatePropertyForm property={property} />
         ) : (
-          <PropertyDisplay property={property} />
+          <PropertyDisplay property={property} inspections={inspections || []} />
         )}
       </div>
     );

@@ -23,8 +23,8 @@ import {
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
 import { Inspection, Property } from "@/lib/dashboard-mgt-bff";
-import DeleteInspectionButton from "./delete-inspection-button";
-import InspectionRoomsManager from "./inspection-rooms-manager";
+import DeleteInspectionButton from "./delete-button";
+import InspectionRoomsManager from "./rooms-manager";
 
 export default function UpdateInspectionForm(props: {
   inspection?: Inspection;

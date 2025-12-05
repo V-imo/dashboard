@@ -1,5 +1,5 @@
-import UpdateInspectionForm from "@/components/inspection/update-inspection-form";
-import InspectionDisplay from "@/components/inspection/inspection-display";
+import UpdateInspectionForm from "@/components/inspection/update-form";
+import InspectionDisplay from "@/components/inspection/display";
 import { getInspection, getProperty } from "@/lib/dashboard-mgt-bff/api";
 import { defaultId } from "@/protoype";
 import { HouseIcon, PencilIcon, XIcon } from "lucide-react";
