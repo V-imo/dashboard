@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter } from "@/i18n/navigation";
 import { createProperty } from "@/lib/dashboard-mgt-bff/api";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
@@ -25,9 +25,11 @@ import { Loader2 } from "lucide-react";
 import { defaultId } from "@/protoype";
 import { Property } from "@/lib/dashboard-mgt-bff";
 import RoomsManager from "../shared/rooms-manager";
+import { useTranslations } from "next-intl";
 
 export default function CreatePropertyForm() {
   const router = useRouter();
+  const t = useTranslations("PropertyCreateForm");
   const [loading, setLoading] = useState(false);
   const [property, setProperty] = useState<Omit<Property, "propertyId">>({
     agencyId: defaultId,
@@ -51,10 +53,10 @@ export default function CreatePropertyForm() {
     try {
       setLoading(true);
       const propertyId = await createProperty(property as Property);
-      toast.success("Property created successfully");
+      toast.success(t("propertyCreatedSuccess"));
       router.push(`/property/${propertyId}`);
     } catch (error) {
-      toast.error("Failed to create property");
+      toast.error(t("failedToCreateProperty"));
       console.error(error);
     } finally {
       setLoading(false);
@@ -66,15 +68,13 @@ export default function CreatePropertyForm() {
       {/* Address Section */}
       <Card>
         <CardHeader>
-          <CardTitle>Property Address</CardTitle>
-          <CardDescription>
-            Enter the address details of the property
-          </CardDescription>
+          <CardTitle>{t("propertyAddress")}</CardTitle>
+          <CardDescription>{t("enterAddressDetails")}</CardDescription>
         </CardHeader>
         <CardContent className="flex flex-col gap-4">
           <div className="flex gap-2">
             <div className="flex-1">
-              <Label htmlFor="address.number">Number</Label>
+              <Label htmlFor="address.number">{t("number")}</Label>
               <Input
                 id="address.number"
                 type="text"
@@ -88,11 +88,11 @@ export default function CreatePropertyForm() {
                     },
                   })
                 }
-                placeholder="Number"
+                placeholder={t("number")}
               />
             </div>
             <div className="flex-[5]">
-              <Label htmlFor="address.street">Street</Label>
+              <Label htmlFor="address.street">{t("street")}</Label>
               <Input
                 id="address.street"
                 type="text"
@@ -106,14 +106,14 @@ export default function CreatePropertyForm() {
                     },
                   })
                 }
-                placeholder="Street"
+                placeholder={t("street")}
               />
             </div>
           </div>
 
           <div className="flex gap-2">
             <div className="flex-[3]">
-              <Label htmlFor="address.city">City</Label>
+              <Label htmlFor="address.city">{t("city")}</Label>
               <Input
                 id="address.city"
                 type="text"
@@ -127,11 +127,11 @@ export default function CreatePropertyForm() {
                     },
                   })
                 }
-                placeholder="City"
+                placeholder={t("city")}
               />
             </div>
             <div className="flex-[2]">
-              <Label htmlFor="address.zipCode">Zip Code</Label>
+              <Label htmlFor="address.zipCode">{t("zipCode")}</Label>
               <Input
                 id="address.zipCode"
                 type="text"
@@ -145,13 +145,13 @@ export default function CreatePropertyForm() {
                     },
                   })
                 }
-                placeholder="Zip Code"
+                placeholder={t("zipCode")}
               />
             </div>
           </div>
 
           <div>
-            <Label htmlFor="address.country">Country</Label>
+            <Label htmlFor="address.country">{t("country")}</Label>
             <Select
               value={property.address.country}
               onValueChange={(value) =>
@@ -165,13 +165,13 @@ export default function CreatePropertyForm() {
               }
             >
               <SelectTrigger id="address.country" className="w-full">
-                <SelectValue placeholder="Select Country" />
+                <SelectValue placeholder={t("selectCountry")} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="FRA">France</SelectItem>
-                <SelectItem value="BEL">Belgium</SelectItem>
-                <SelectItem value="CHE">Suisse</SelectItem>
-                <SelectItem value="GBR">England</SelectItem>
+                <SelectItem value="FRA">{t("france")}</SelectItem>
+                <SelectItem value="BEL">{t("belgium")}</SelectItem>
+                <SelectItem value="CHE">{t("suisse")}</SelectItem>
+                <SelectItem value="GBR">{t("england")}</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -181,15 +181,13 @@ export default function CreatePropertyForm() {
       {/* Owner Section */}
       <Card>
         <CardHeader>
-          <CardTitle>Property Owner</CardTitle>
-          <CardDescription>
-            Enter the contact information of the property owner
-          </CardDescription>
+          <CardTitle>{t("propertyOwner")}</CardTitle>
+          <CardDescription>{t("enterContactInfo")}</CardDescription>
         </CardHeader>
         <CardContent className="flex flex-col gap-4">
           <div className="flex gap-2">
             <div className="flex-1">
-              <Label htmlFor="owner.firstName">First Name</Label>
+              <Label htmlFor="owner.firstName">{t("firstName")}</Label>
               <Input
                 id="owner.firstName"
                 type="text"
@@ -203,11 +201,11 @@ export default function CreatePropertyForm() {
                     },
                   })
                 }
-                placeholder="First Name"
+                placeholder={t("firstName")}
               />
             </div>
             <div className="flex-1">
-              <Label htmlFor="owner.lastName">Last Name</Label>
+              <Label htmlFor="owner.lastName">{t("lastName")}</Label>
               <Input
                 id="owner.lastName"
                 type="text"
@@ -221,14 +219,14 @@ export default function CreatePropertyForm() {
                     },
                   })
                 }
-                placeholder="Last Name"
+                placeholder={t("lastName")}
               />
             </div>
           </div>
 
           <div className="flex gap-2">
             <div className="flex-1">
-              <Label htmlFor="owner.mail">Email</Label>
+              <Label htmlFor="owner.mail">{t("email")}</Label>
               <Input
                 id="owner.mail"
                 type="email"
@@ -242,11 +240,11 @@ export default function CreatePropertyForm() {
                     },
                   })
                 }
-                placeholder="Email"
+                placeholder={t("email")}
               />
             </div>
             <div className="flex-1">
-              <Label htmlFor="owner.phoneNumber">Phone Number</Label>
+              <Label htmlFor="owner.phoneNumber">{t("phoneNumber")}</Label>
               <Input
                 id="owner.phoneNumber"
                 type="tel"
@@ -260,7 +258,7 @@ export default function CreatePropertyForm() {
                     },
                   })
                 }
-                placeholder="Phone Number"
+                placeholder={t("phoneNumber")}
               />
             </div>
           </div>
@@ -279,10 +277,10 @@ export default function CreatePropertyForm() {
           {loading ? (
             <>
               <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-              Creating...
+              {t("creating")}
             </>
           ) : (
-            "Create Property"
+            t("createProperty")
           )}
         </Button>
       </div>

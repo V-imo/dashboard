@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter } from "@/i18n/navigation";
 import { Agency } from "@/lib/dashboard-mgt-bff";
 import { updateAgency } from "@/lib/dashboard-mgt-bff/api";
 import { defaultId } from "@/protoype";
@@ -17,9 +17,11 @@ import {
 } from "../ui/select";
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 export default function UpdateAgencyForm(props: { agency?: Agency }) {
   const router = useRouter();
+  const t = useTranslations("AgencyUpdateForm");
   const [loading, setLoading] = useState(false);
   const [agency, setAgency] = useState<Agency>(
     props.agency || {
@@ -48,10 +50,10 @@ export default function UpdateAgencyForm(props: { agency?: Agency }) {
     try {
       setLoading(true);
       await updateAgency(agency);
-      toast.success("Agency updated successfully");
+      toast.success(t("agencyUpdatedSuccess"));
       router.refresh(); // This will re-fetch the server-side data
     } catch (error) {
-      toast.error("Failed to update agency");
+      toast.error(t("failedToUpdateAgency"));
       console.error(error);
     } finally {
       setLoading(false);
@@ -60,26 +62,26 @@ export default function UpdateAgencyForm(props: { agency?: Agency }) {
 
   return (
     <div className="flex flex-col gap-2">
-      <Label>Name</Label>
+      <Label>{t("name")}</Label>
       <Input
         type="text"
         value={agency.name}
         onChange={(e) => setAgency({ ...agency, name: e.target.value })}
-        placeholder="Name"
+        placeholder={t("name")}
       />
-      <Label>Contact Mail</Label>
+      <Label>{t("contactMail")}</Label>
       <Input
         type="email"
         value={agency.contactMail}
         onChange={(e) => setAgency({ ...agency, contactMail: e.target.value })}
-        placeholder="Contact Mail"
+        placeholder={t("contactMail")}
       />
-      <Label>Contact Phone</Label>
+      <Label>{t("contactPhone")}</Label>
       <Input
         type="tel"
         value={agency.contactPhone}
         onChange={(e) => setAgency({ ...agency, contactPhone: e.target.value })}
-        placeholder="Contact Phone"
+        placeholder={t("contactPhone")}
       />
 
       <div className="flex gap-2">
@@ -93,7 +95,7 @@ export default function UpdateAgencyForm(props: { agency?: Agency }) {
               address: { ...agency.address, number: e.target.value },
             })
           }
-          placeholder="Number"
+          placeholder={t("number")}
         />
 
         <Input
@@ -106,7 +108,7 @@ export default function UpdateAgencyForm(props: { agency?: Agency }) {
               address: { ...agency.address, street: e.target.value },
             })
           }
-          placeholder="Street"
+          placeholder={t("street")}
         />
       </div>
 
@@ -121,7 +123,7 @@ export default function UpdateAgencyForm(props: { agency?: Agency }) {
               address: { ...agency.address, city: e.target.value },
             })
           }
-          placeholder="City"
+          placeholder={t("city")}
         />
         <Input
           className="flex-2"
@@ -133,10 +135,10 @@ export default function UpdateAgencyForm(props: { agency?: Agency }) {
               address: { ...agency.address, zipCode: e.target.value },
             })
           }
-          placeholder="Zip Code"
+          placeholder={t("zipCode")}
         />
       </div>
-      <Label>Country</Label>
+      <Label>{t("country")}</Label>
       <Select
         value={agency.address.country}
         onValueChange={(value) =>
@@ -147,17 +149,17 @@ export default function UpdateAgencyForm(props: { agency?: Agency }) {
         }
       >
         <SelectTrigger>
-          <SelectValue placeholder="Select Country" />
+          <SelectValue placeholder={t("selectCountry")} />
         </SelectTrigger>
         <SelectContent>
-          <SelectItem value="FRA">France</SelectItem>
-          <SelectItem value="BEL">Belgium</SelectItem>
-          <SelectItem value="CHE">Suisse</SelectItem>
-          <SelectItem value="GBR">England</SelectItem>
+          <SelectItem value="FRA">{t("france")}</SelectItem>
+          <SelectItem value="BEL">{t("belgium")}</SelectItem>
+          <SelectItem value="CHE">{t("suisse")}</SelectItem>
+          <SelectItem value="GBR">{t("england")}</SelectItem>
         </SelectContent>
       </Select>
       <Button onClick={submit}>
-        {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : "Update"}
+        {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : t("update")}
       </Button>
     </div>
   );

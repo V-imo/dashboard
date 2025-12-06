@@ -1,3 +1,5 @@
+"use server";
+
 import {
   Card,
   CardContent,
@@ -8,12 +10,14 @@ import {
 import { Label } from "../ui/label";
 import { Agency } from "@/lib/dashboard-mgt-bff";
 import { Mail, Phone, MapPin, Building2 } from "lucide-react";
+import { getTranslations } from "next-intl/server";
 
 interface AgencyDisplayProps {
   agency: Agency;
 }
 
-export default function AgencyDisplay({ agency }: AgencyDisplayProps) {
+export default async function AgencyDisplay({ agency }: AgencyDisplayProps) {
+  const t = await getTranslations("AgencyDisplay");
   const fullAddress = `${agency.address.number} ${agency.address.street}, ${agency.address.city} ${agency.address.zipCode}, ${agency.address.country}`;
 
   return (
@@ -25,7 +29,7 @@ export default function AgencyDisplay({ agency }: AgencyDisplayProps) {
             <Building2 className="w-5 h-5 text-muted-foreground" />
             <CardTitle className="text-xl sm:text-2xl">{agency.name}</CardTitle>
           </div>
-          <CardDescription>Agency Information</CardDescription>
+          <CardDescription>{t("agencyInformation")}</CardDescription>
         </CardHeader>
       </Card>
 
@@ -35,15 +39,17 @@ export default function AgencyDisplay({ agency }: AgencyDisplayProps) {
         <Card>
           <CardHeader>
             <CardTitle className="text-base sm:text-lg">
-              Contact Information
+              {t("contactInformation")}
             </CardTitle>
-            <CardDescription>Contact details for the agency</CardDescription>
+            <CardDescription>{t("contactDetails")}</CardDescription>
           </CardHeader>
           <CardContent className="flex flex-col gap-4">
             <div className="flex items-start gap-3">
               <Mail className="w-5 h-5 text-muted-foreground mt-0.5 flex-shrink-0" />
               <div className="flex-1 min-w-0">
-                <Label className="text-xs text-muted-foreground">Email</Label>
+                <Label className="text-xs text-muted-foreground">
+                  {t("email")}
+                </Label>
                 <p className="text-sm font-medium break-words">
                   {agency.contactMail}
                 </p>
@@ -54,7 +60,7 @@ export default function AgencyDisplay({ agency }: AgencyDisplayProps) {
                 <Phone className="w-5 h-5 text-muted-foreground mt-0.5 flex-shrink-0" />
                 <div className="flex-1 min-w-0">
                   <Label className="text-xs text-muted-foreground">
-                    Phone Number
+                    {t("phoneNumber")}
                   </Label>
                   <p className="text-sm font-medium break-words">
                     {agency.contactPhone}
@@ -68,8 +74,10 @@ export default function AgencyDisplay({ agency }: AgencyDisplayProps) {
         {/* Address */}
         <Card>
           <CardHeader>
-            <CardTitle className="text-base sm:text-lg">Address</CardTitle>
-            <CardDescription>Physical location of the agency</CardDescription>
+            <CardTitle className="text-base sm:text-lg">
+              {t("address")}
+            </CardTitle>
+            <CardDescription>{t("physicalLocation")}</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="flex items-start gap-3">

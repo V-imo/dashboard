@@ -10,8 +10,9 @@ import {
 } from "../ui/card";
 import { Calendar } from "lucide-react";
 import { Inspection } from "@/lib/dashboard-mgt-bff";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import InspectionStatusBadge from "../inspection/status-badge";
+import { useTranslations, useLocale } from "next-intl";
 
 interface InspectionsCarouselProps {
   inspections: Inspection[];
@@ -22,6 +23,8 @@ export default function InspectionsCarousel({
   inspections,
   propertyId,
 }: InspectionsCarouselProps) {
+  const t = useTranslations("PropertyInspectionsCarousel");
+  const locale = useLocale();
   const scrollContainerRef = useRef<HTMLDivElement>(null);
 
   // Sort inspections by date (oldest first, latest at the right)
@@ -44,14 +47,16 @@ export default function InspectionsCarousel({
       <CardHeader>
         <div className="flex items-center gap-2">
           <Calendar className="w-5 h-5 text-muted-foreground" />
-          <CardTitle className="text-base sm:text-lg">Inspections</CardTitle>
+          <CardTitle className="text-base sm:text-lg">
+            {t("inspections")}
+          </CardTitle>
         </div>
-        <CardDescription>Recent inspections for this property</CardDescription>
+        <CardDescription>{t("recentInspections")}</CardDescription>
       </CardHeader>
       <CardContent>
         {sortedInspections.length === 0 ? (
           <p className="text-sm text-muted-foreground text-center py-4">
-            No inspections found
+            {t("noInspectionsFound")}
           </p>
         ) : (
           <div
@@ -62,7 +67,7 @@ export default function InspectionsCarousel({
               {sortedInspections.map((inspection) => {
                 const inspectionDate = new Date(inspection.date);
                 const formattedDate = inspectionDate.toLocaleDateString(
-                  "en-US",
+                  locale,
                   {
                     year: "numeric",
                     month: "short",
@@ -87,8 +92,10 @@ export default function InspectionsCarousel({
                         </div>
                         {inspection.rooms && inspection.rooms.length > 0 && (
                           <div className="text-xs text-muted-foreground">
-                            {inspection.rooms.length} room
-                            {inspection.rooms.length !== 1 ? "s" : ""}
+                            {inspection.rooms.length}{" "}
+                            {inspection.rooms.length !== 1
+                              ? t("rooms")
+                              : t("room")}
                           </div>
                         )}
                       </CardContent>

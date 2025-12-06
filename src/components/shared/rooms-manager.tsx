@@ -27,6 +27,7 @@ import { defaultId } from "@/protoype";
 import { toast } from "sonner";
 import ElementManager from "./element-manager";
 import { cn } from "@/lib/utils";
+import { useTranslations } from "next-intl";
 
 export type Room = Property["rooms"][number];
 export type Element = Room["elements"][number];
@@ -37,6 +38,7 @@ interface RoomsManagerProps {
 }
 
 export default function RoomsManager({ rooms, onChange }: RoomsManagerProps) {
+  const t = useTranslations("RoomsManager");
   const [selectedRoomIndex, setSelectedRoomIndex] = useState<number | null>(null);
   const [editingRoomName, setEditingRoomName] = useState<number | null>(null);
   const [importDialogOpen, setImportDialogOpen] = useState(false);
@@ -55,7 +57,7 @@ export default function RoomsManager({ rooms, onChange }: RoomsManagerProps) {
       const fetchedModels = await getModels(defaultId);
       setModels(fetchedModels || []);
     } catch (error) {
-      toast.error("Failed to load models");
+      toast.error(t("failedToLoadModels"));
       console.error(error);
     } finally {
       setLoadingModels(false);
@@ -64,13 +66,13 @@ export default function RoomsManager({ rooms, onChange }: RoomsManagerProps) {
 
   const handleImportModel = (model: Model) => {
     if (!model.rooms || model.rooms.length === 0) {
-      toast.error("This model has no rooms to import");
+      toast.error(t("thisModelHasNoRooms"));
       return;
     }
     // Merge imported rooms with existing rooms
     onChange([...rooms, ...model.rooms]);
     toast.success(
-      `Imported ${model.rooms.length} room(s) from "${model.name}"`
+      t("importedRoomsSuccess", { count: model.rooms.length, name: model.name })
     );
     setImportDialogOpen(false);
   };
@@ -156,9 +158,9 @@ export default function RoomsManager({ rooms, onChange }: RoomsManagerProps) {
         <CardHeader>
           <div className="flex items-center justify-between">
             <div>
-              <CardTitle>Rooms</CardTitle>
+              <CardTitle>{t("rooms")}</CardTitle>
               <CardDescription>
-                Add rooms and their elements to the property
+                {t("addRoomsAndElements")}
               </CardDescription>
             </div>
             <Dialog
@@ -168,25 +170,24 @@ export default function RoomsManager({ rooms, onChange }: RoomsManagerProps) {
               <DialogTrigger asChild>
                 <Button variant="outline" size="sm">
                   <DownloadIcon className="w-4 h-4 mr-2" />
-                  Import Model
+                  {t("importModel")}
                 </Button>
               </DialogTrigger>
               <DialogContent>
                 <DialogHeader>
-                  <DialogTitle>Import Rooms from Model</DialogTitle>
+                  <DialogTitle>{t("importRoomsFromModel")}</DialogTitle>
                   <DialogDescription>
-                    Select a model to import its rooms. The rooms will be
-                    added to your existing rooms.
+                    {t("selectModelToImport")}
                   </DialogDescription>
                 </DialogHeader>
                 <div className="flex flex-col gap-2 py-4 max-h-[400px] overflow-y-auto">
                   {loadingModels ? (
                     <div className="text-center text-muted-foreground py-4">
-                      Loading models...
+                      {t("loadingModels")}
                     </div>
                   ) : models.length === 0 ? (
                     <div className="text-center text-muted-foreground py-4">
-                      No models available
+                      {t("noModelsAvailable")}
                     </div>
                   ) : (
                     models.map((model) => (
@@ -200,7 +201,8 @@ export default function RoomsManager({ rooms, onChange }: RoomsManagerProps) {
                         <div className="flex flex-col items-start">
                           <span className="font-medium">{model.name}</span>
                           <span className="text-xs text-muted-foreground">
-                            {model.rooms?.length || 0} room(s)
+                            {model.rooms?.length || 0}{" "}
+                            {model.rooms?.length !== 1 ? t("rooms") : t("room")}
                           </span>
                         </div>
                       </Button>
@@ -212,7 +214,7 @@ export default function RoomsManager({ rooms, onChange }: RoomsManagerProps) {
                     variant="outline"
                     onClick={() => setImportDialogOpen(false)}
                   >
-                    Cancel
+                    {t("cancel")}
                   </Button>
                 </DialogFooter>
               </DialogContent>
@@ -262,14 +264,14 @@ export default function RoomsManager({ rooms, onChange }: RoomsManagerProps) {
                         }
                       }}
                       onClick={(e) => e.stopPropagation()}
-                      placeholder="Room name"
+                      placeholder={t("roomName")}
                       className="h-7 px-2 text-sm min-w-[100px]"
                       autoFocus
                     />
                   ) : (
                     <>
                       <span className="text-sm font-medium truncate max-w-[120px]">
-                        {room.name || `Room ${roomIndex + 1}`}
+                        {room.name || `${t("room")} ${roomIndex + 1}`}
                       </span>
                       <Button
                         variant="ghost"
@@ -305,21 +307,21 @@ export default function RoomsManager({ rooms, onChange }: RoomsManagerProps) {
               className="shrink-0 ml-auto"
             >
               <PlusIcon className="w-4 h-4 mr-2" />
-              Add Room
+              {t("addRoom")}
             </Button>
           </div>
 
           {/* Selected Room Content */}
           {rooms.length === 0 ? (
             <div className="text-center text-muted-foreground py-12">
-              No rooms added yet. Click "Add Room" to get started.
+              {t("noRoomsAddedYet")}
             </div>
           ) : selectedRoom && selectedRoomIndex !== null ? (
             <div className="flex flex-col gap-4 pt-4">
               <div className="flex gap-2">
                 <div className="flex-1">
                   <Label htmlFor={`room-${selectedRoomIndex}-description`}>
-                    Description
+                    {t("description")}
                   </Label>
                   <Input
                     id={`room-${selectedRoomIndex}-description`}
@@ -330,12 +332,12 @@ export default function RoomsManager({ rooms, onChange }: RoomsManagerProps) {
                         description: e.target.value,
                       })
                     }
-                    placeholder="Room description (optional)"
+                    placeholder={t("roomDescriptionOptional")}
                   />
                 </div>
                 <div className="flex-1">
                   <Label htmlFor={`room-${selectedRoomIndex}-area`}>
-                    Area (m²)
+                    {t("area")}
                   </Label>
                   <Input
                     id={`room-${selectedRoomIndex}-area`}
@@ -348,7 +350,7 @@ export default function RoomsManager({ rooms, onChange }: RoomsManagerProps) {
                           : undefined,
                       })
                     }
-                    placeholder="Area in square meters (optional)"
+                    placeholder={t("areaInSquareMeters")}
                     min="0"
                     step="0.01"
                   />
@@ -357,20 +359,20 @@ export default function RoomsManager({ rooms, onChange }: RoomsManagerProps) {
 
               <div className="flex flex-col gap-3">
                 <div className="flex items-center justify-between">
-                  <Label>Elements</Label>
+                  <Label>{t("elements")}</Label>
                   <Button
                     onClick={() => addElement(selectedRoomIndex)}
                     variant="outline"
                     size="sm"
                   >
                     <PlusIcon className="w-4 h-4 mr-2" />
-                    Add Element
+                    {t("addElement")}
                   </Button>
                 </div>
 
                 {selectedRoom.elements.length === 0 ? (
                   <div className="text-sm text-muted-foreground py-4 text-center border rounded-md">
-                    No elements added. Click "Add Element" to add one.
+                    {t("noElementsAdded")}
                   </div>
                 ) : (
                   <div className="flex flex-col gap-3">

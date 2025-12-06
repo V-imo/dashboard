@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter } from "@/i18n/navigation";
 import { createModel } from "@/lib/dashboard-mgt-bff/api";
 import { Property } from "@/lib/dashboard-mgt-bff";
 import { defaultId } from "@/protoype";
@@ -19,6 +19,7 @@ import { Input } from "../ui/input";
 import { Label } from "../ui/label";
 import { toast } from "sonner";
 import { Loader2, CopyIcon } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 interface CreateModelFromPropertyButtonProps {
   property: Property;
@@ -28,13 +29,14 @@ export default function CreateModelFromPropertyButton({
   property,
 }: CreateModelFromPropertyButtonProps) {
   const router = useRouter();
+  const t = useTranslations("PropertyCreateModelFromPropertyButton");
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [modelName, setModelName] = useState("");
 
   const handleSubmit = async () => {
     if (!modelName.trim()) {
-      toast.error("Model name is required");
+      toast.error(t("modelNameRequired"));
       return;
     }
 
@@ -45,12 +47,12 @@ export default function CreateModelFromPropertyButton({
         name: modelName.trim(),
         rooms: property.rooms || [],
       });
-      toast.success("Model created successfully");
+      toast.success(t("modelCreatedSuccess"));
       setOpen(false);
       setModelName("");
       router.push("/model");
     } catch (error) {
-      toast.error("Failed to create model");
+      toast.error(t("failedToCreateModel"));
       console.error(error);
     } finally {
       setLoading(false);
@@ -62,26 +64,23 @@ export default function CreateModelFromPropertyButton({
       <DialogTrigger asChild>
         <Button variant="outline" size="lg">
           <CopyIcon className="w-4 h-4 mr-2" />
-          Create Model
+          {t("createModel")}
         </Button>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Create Model from Property</DialogTitle>
-          <DialogDescription>
-            Enter a name for the model. The rooms from this property will be
-            copied to the model.
-          </DialogDescription>
+          <DialogTitle>{t("createModelFromProperty")}</DialogTitle>
+          <DialogDescription>{t("enterModelName")}</DialogDescription>
         </DialogHeader>
         <div className="flex flex-col gap-4 py-4">
           <div>
-            <Label htmlFor="model-name">Model Name</Label>
+            <Label htmlFor="model-name">{t("modelName")}</Label>
             <Input
               id="model-name"
               type="text"
               value={modelName}
               onChange={(e) => setModelName(e.target.value)}
-              placeholder="e.g., Standard Apartment, House Template"
+              placeholder={t("modelNamePlaceholder")}
               onKeyDown={(e) => {
                 if (e.key === "Enter" && modelName.trim()) {
                   handleSubmit();
@@ -97,16 +96,19 @@ export default function CreateModelFromPropertyButton({
             onClick={() => setOpen(false)}
             disabled={loading}
           >
-            Cancel
+            {t("cancel")}
           </Button>
-          <Button onClick={handleSubmit} disabled={loading || !modelName.trim()}>
+          <Button
+            onClick={handleSubmit}
+            disabled={loading || !modelName.trim()}
+          >
             {loading ? (
               <>
                 <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                Creating...
+                {t("creating")}
               </>
             ) : (
-              "Create Model"
+              t("createModel")
             )}
           </Button>
         </DialogFooter>
@@ -114,4 +116,3 @@ export default function CreateModelFromPropertyButton({
     </Dialog>
   );
 }
-

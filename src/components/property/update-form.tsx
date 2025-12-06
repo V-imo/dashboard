@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter } from "@/i18n/navigation";
 import { updateProperty } from "@/lib/dashboard-mgt-bff/api";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
@@ -25,9 +25,11 @@ import { Loader2 } from "lucide-react";
 import { Property } from "@/lib/dashboard-mgt-bff";
 import DeletePropertyButton from "./delete-button";
 import RoomsManager from "../shared/rooms-manager";
+import { useTranslations } from "next-intl";
 
 export default function UpdatePropertyForm(props: { property?: Property }) {
   const router = useRouter();
+  const t = useTranslations("PropertyUpdateForm");
   const [loading, setLoading] = useState(false);
   const [property, setProperty] = useState<Property>(
     props.property || {
@@ -64,10 +66,10 @@ export default function UpdatePropertyForm(props: { property?: Property }) {
         ...property,
         propertyId: props.property?.propertyId || property.propertyId,
       });
-      toast.success("Property updated successfully");
+      toast.success(t("propertyUpdatedSuccess"));
       router.refresh(); // This will re-fetch the server-side data
     } catch (error) {
-      toast.error("Failed to update property");
+      toast.error(t("failedToUpdateProperty"));
       console.error(error);
     } finally {
       setLoading(false);
@@ -79,15 +81,13 @@ export default function UpdatePropertyForm(props: { property?: Property }) {
       {/* Address Section */}
       <Card>
         <CardHeader>
-          <CardTitle>Property Address</CardTitle>
-          <CardDescription>
-            Update the address details of the property
-          </CardDescription>
+          <CardTitle>{t("propertyAddress")}</CardTitle>
+          <CardDescription>{t("updateAddressDetails")}</CardDescription>
         </CardHeader>
         <CardContent className="flex flex-col gap-4">
           <div className="flex gap-2">
             <div className="flex-1">
-              <Label htmlFor="address.number">Number</Label>
+              <Label htmlFor="address.number">{t("number")}</Label>
               <Input
                 id="address.number"
                 type="text"
@@ -101,11 +101,11 @@ export default function UpdatePropertyForm(props: { property?: Property }) {
                     },
                   })
                 }
-                placeholder="Number"
+                placeholder={t("number")}
               />
             </div>
             <div className="flex-[5]">
-              <Label htmlFor="address.street">Street</Label>
+              <Label htmlFor="address.street">{t("street")}</Label>
               <Input
                 id="address.street"
                 type="text"
@@ -119,14 +119,14 @@ export default function UpdatePropertyForm(props: { property?: Property }) {
                     },
                   })
                 }
-                placeholder="Street"
+                placeholder={t("street")}
               />
             </div>
           </div>
 
           <div className="flex gap-2">
             <div className="flex-[3]">
-              <Label htmlFor="address.city">City</Label>
+              <Label htmlFor="address.city">{t("city")}</Label>
               <Input
                 id="address.city"
                 type="text"
@@ -140,11 +140,11 @@ export default function UpdatePropertyForm(props: { property?: Property }) {
                     },
                   })
                 }
-                placeholder="City"
+                placeholder={t("city")}
               />
             </div>
             <div className="flex-[2]">
-              <Label htmlFor="address.zipCode">Zip Code</Label>
+              <Label htmlFor="address.zipCode">{t("zipCode")}</Label>
               <Input
                 id="address.zipCode"
                 type="text"
@@ -158,13 +158,13 @@ export default function UpdatePropertyForm(props: { property?: Property }) {
                     },
                   })
                 }
-                placeholder="Zip Code"
+                placeholder={t("zipCode")}
               />
             </div>
           </div>
 
           <div>
-            <Label htmlFor="address.country">Country</Label>
+            <Label htmlFor="address.country">{t("country")}</Label>
             <Select
               value={property.address.country}
               onValueChange={(value) =>
@@ -178,13 +178,13 @@ export default function UpdatePropertyForm(props: { property?: Property }) {
               }
             >
               <SelectTrigger id="address.country" className="w-full">
-                <SelectValue placeholder="Select Country" />
+                <SelectValue placeholder={t("selectCountry")} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="FRA">France</SelectItem>
-                <SelectItem value="BEL">Belgium</SelectItem>
-                <SelectItem value="CHE">Suisse</SelectItem>
-                <SelectItem value="GBR">England</SelectItem>
+                <SelectItem value="FRA">{t("france")}</SelectItem>
+                <SelectItem value="BEL">{t("belgium")}</SelectItem>
+                <SelectItem value="CHE">{t("suisse")}</SelectItem>
+                <SelectItem value="GBR">{t("england")}</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -194,15 +194,13 @@ export default function UpdatePropertyForm(props: { property?: Property }) {
       {/* Owner Section */}
       <Card>
         <CardHeader>
-          <CardTitle>Property Owner</CardTitle>
-          <CardDescription>
-            Update the contact information of the property owner
-          </CardDescription>
+          <CardTitle>{t("propertyOwner")}</CardTitle>
+          <CardDescription>{t("updateContactInfo")}</CardDescription>
         </CardHeader>
         <CardContent className="flex flex-col gap-4">
           <div className="flex gap-2">
             <div className="flex-1">
-              <Label htmlFor="owner.firstName">First Name</Label>
+              <Label htmlFor="owner.firstName">{t("firstName")}</Label>
               <Input
                 id="owner.firstName"
                 type="text"
@@ -216,11 +214,11 @@ export default function UpdatePropertyForm(props: { property?: Property }) {
                     },
                   })
                 }
-                placeholder="First Name"
+                placeholder={t("firstName")}
               />
             </div>
             <div className="flex-1">
-              <Label htmlFor="owner.lastName">Last Name</Label>
+              <Label htmlFor="owner.lastName">{t("lastName")}</Label>
               <Input
                 id="owner.lastName"
                 type="text"
@@ -234,14 +232,14 @@ export default function UpdatePropertyForm(props: { property?: Property }) {
                     },
                   })
                 }
-                placeholder="Last Name"
+                placeholder={t("lastName")}
               />
             </div>
           </div>
 
           <div className="flex gap-2">
             <div className="flex-1">
-              <Label htmlFor="owner.mail">Email</Label>
+              <Label htmlFor="owner.mail">{t("email")}</Label>
               <Input
                 id="owner.mail"
                 type="email"
@@ -255,11 +253,11 @@ export default function UpdatePropertyForm(props: { property?: Property }) {
                     },
                   })
                 }
-                placeholder="Email"
+                placeholder={t("email")}
               />
             </div>
             <div className="flex-1">
-              <Label htmlFor="owner.phoneNumber">Phone Number</Label>
+              <Label htmlFor="owner.phoneNumber">{t("phoneNumber")}</Label>
               <Input
                 id="owner.phoneNumber"
                 type="tel"
@@ -273,7 +271,7 @@ export default function UpdatePropertyForm(props: { property?: Property }) {
                     },
                   })
                 }
-                placeholder="Phone Number"
+                placeholder={t("phoneNumber")}
               />
             </div>
           </div>
@@ -293,10 +291,10 @@ export default function UpdatePropertyForm(props: { property?: Property }) {
           {loading ? (
             <>
               <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-              Updating...
+              {t("updating")}
             </>
           ) : (
-            "Update Property"
+            t("updateProperty")
           )}
         </Button>
       </div>

@@ -1,6 +1,8 @@
+"use server";
+
 import { getProperties } from "@/lib/dashboard-mgt-bff/api";
 import { defaultId } from "@/protoype";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import {
   Table,
   TableBody,
@@ -16,9 +18,11 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { getTranslations } from "next-intl/server";
 
 export default async function PropertyPage() {
   const properties = await getProperties(defaultId);
+  const t = await getTranslations("PropertyPage");
 
   if (!properties || properties.length === 0) {
     return (
@@ -26,7 +30,7 @@ export default async function PropertyPage() {
         <Card>
           <CardContent className="pt-6">
             <p className="text-center text-muted-foreground">
-              No properties found
+              {t("noPropertiesFound")}
             </p>
           </CardContent>
         </Card>
@@ -38,23 +42,23 @@ export default async function PropertyPage() {
     <div className="flex flex-col items-center justify-center w-full max-w-6xl mx-auto px-4 sm:px-6">
       <Card className="w-full">
         <CardHeader>
-          <CardTitle>Properties</CardTitle>
-          <CardDescription>List of all properties</CardDescription>
+          <CardTitle>{t("properties")}</CardTitle>
+          <CardDescription>{t("listOfAllProperties")}</CardDescription>
         </CardHeader>
         <CardContent>
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Owner</TableHead>
-                <TableHead>Address</TableHead>
-                <TableHead className="text-right">Rooms</TableHead>
+                <TableHead>{t("owner")}</TableHead>
+                <TableHead>{t("address")}</TableHead>
+                <TableHead className="text-right">{t("rooms")}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {properties.map((property) => {
                 const ownerName = property.owner
                   ? `${property.owner.firstName} ${property.owner.lastName}`
-                  : "N/A";
+                  : t("nA");
                 const address = `${property.address.number} ${property.address.street}, ${property.address.city} ${property.address.zipCode}`;
                 return (
                   <TableRow

@@ -1,9 +1,11 @@
+"use server";
+
 import UpdateInspectionForm from "@/components/inspection/update-form";
 import InspectionDisplay from "@/components/inspection/display";
 import { getInspection, getProperty } from "@/lib/dashboard-mgt-bff/api";
 import { defaultId } from "@/protoype";
 import { HouseIcon, PencilIcon, XIcon } from "lucide-react";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import { notFound } from "next/navigation";
 import { Button } from "@/components/ui/button";
 

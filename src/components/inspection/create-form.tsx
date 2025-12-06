@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter } from "@/i18n/navigation";
 import { createInspection } from "@/lib/dashboard-mgt-bff/api";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
@@ -24,12 +24,14 @@ import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
 import { defaultId } from "@/protoype";
 import { Inspection, Property } from "@/lib/dashboard-mgt-bff";
+import { useTranslations } from "next-intl";
 
 export default function CreateInspectionForm(props: {
   propertyId: string;
   property?: Property;
 }) {
   const router = useRouter();
+  const t = useTranslations("InspectionCreateForm");
   const [loading, setLoading] = useState(false);
   const [inspection, setInspection] = useState<
     Omit<Inspection, "inspectionId">
@@ -46,10 +48,10 @@ export default function CreateInspectionForm(props: {
     try {
       setLoading(true);
       const inspectionId = await createInspection(inspection as Inspection);
-      toast.success("Inspection created successfully");
+      toast.success(t("inspectionCreatedSuccess"));
       router.push(`/property/${props.propertyId}/inspection/${inspectionId}`);
     } catch (error) {
-      toast.error("Failed to create inspection");
+      toast.error(t("failedToCreateInspection"));
       console.error(error);
     } finally {
       setLoading(false);
@@ -62,20 +64,18 @@ export default function CreateInspectionForm(props: {
       {props.property && (
         <Card>
           <CardHeader>
-            <CardTitle>Property</CardTitle>
-            <CardDescription>
-              This inspection will be created for the following property
-            </CardDescription>
+            <CardTitle>{t("property")}</CardTitle>
+            <CardDescription>{t("inspectionForProperty")}</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="flex flex-col gap-2">
               <div>
-                <span className="font-medium">Owner: </span>
+                <span className="font-medium">{t("owner")}: </span>
                 {props.property.owner?.firstName}{" "}
                 {props.property.owner?.lastName}
               </div>
               <div>
-                <span className="font-medium">Address: </span>
+                <span className="font-medium">{t("address")}: </span>
                 {props.property.address.number} {props.property.address.street},{" "}
                 {props.property.address.city} {props.property.address.zipCode},{" "}
                 {props.property.address.country}
@@ -88,13 +88,13 @@ export default function CreateInspectionForm(props: {
       {/* Inspection Details Section */}
       <Card>
         <CardHeader>
-          <CardTitle>Inspection Details</CardTitle>
-          <CardDescription>Enter the inspection information</CardDescription>
+          <CardTitle>{t("inspectionDetails")}</CardTitle>
+          <CardDescription>{t("enterInspectionInfo")}</CardDescription>
         </CardHeader>
         <CardContent className="flex flex-col gap-4">
           <div className="flex gap-4">
             <div className="flex-1">
-              <Label htmlFor="date">Date</Label>
+              <Label htmlFor="date">{t("date")}</Label>
               <Input
                 id="date"
                 type="datetime-local"
@@ -111,12 +111,12 @@ export default function CreateInspectionForm(props: {
                       : "",
                   })
                 }
-                placeholder="Date"
+                placeholder={t("date")}
               />
             </div>
 
             <div className="flex-1">
-              <Label htmlFor="status">Status</Label>
+              <Label htmlFor="status">{t("status")}</Label>
               <Select
                 value={inspection.status}
                 onValueChange={(
@@ -129,20 +129,20 @@ export default function CreateInspectionForm(props: {
                 }
               >
                 <SelectTrigger id="status" className="w-full">
-                  <SelectValue placeholder="Select Status" />
+                  <SelectValue placeholder={t("selectStatus")} />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="TO_DO">To Do</SelectItem>
-                  <SelectItem value="IN_PROGRESS">In Progress</SelectItem>
-                  <SelectItem value="DONE">Done</SelectItem>
-                  <SelectItem value="CANCELED">Canceled</SelectItem>
+                  <SelectItem value="TO_DO">{t("toDo")}</SelectItem>
+                  <SelectItem value="IN_PROGRESS">{t("inProgress")}</SelectItem>
+                  <SelectItem value="DONE">{t("done")}</SelectItem>
+                  <SelectItem value="CANCELED">{t("canceled")}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
           </div>
 
           <div>
-            <Label htmlFor="inspectorId">Inspector ID (Optional)</Label>
+            <Label htmlFor="inspectorId">{t("inspectorIdOptional")}</Label>
             <Input
               id="inspectorId"
               type="text"
@@ -153,7 +153,7 @@ export default function CreateInspectionForm(props: {
                   inspectorId: e.target.value,
                 })
               }
-              placeholder="Inspector ID"
+              placeholder={t("inspectorId")}
             />
           </div>
         </CardContent>
@@ -165,10 +165,10 @@ export default function CreateInspectionForm(props: {
           {loading ? (
             <>
               <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-              Creating...
+              {t("creating")}
             </>
           ) : (
-            "Create Inspection"
+            t("createInspection")
           )}
         </Button>
       </div>

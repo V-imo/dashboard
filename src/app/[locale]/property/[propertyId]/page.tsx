@@ -1,9 +1,14 @@
+"use server";
+
 import UpdatePropertyForm from "@/components/property/update-form";
 import PropertyDisplay from "@/components/property/display";
-import { getProperty, getPropertyInspections } from "@/lib/dashboard-mgt-bff/api";
+import {
+  getProperty,
+  getPropertyInspections,
+} from "@/lib/dashboard-mgt-bff/api";
 import { defaultId } from "@/protoype";
 import { notFound } from "next/navigation";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import { Button } from "@/components/ui/button";
 import { PlusIcon, PencilIcon, XIcon } from "lucide-react";
 import CreateModelFromPropertyButton from "@/components/property/create-model-from-property-button";
@@ -54,7 +59,10 @@ export default async function PropertyPage({
         {isEditMode ? (
           <UpdatePropertyForm property={property} />
         ) : (
-          <PropertyDisplay property={property} inspections={inspections || []} />
+          <PropertyDisplay
+            property={property}
+            inspections={inspections || []}
+          />
         )}
       </div>
     );

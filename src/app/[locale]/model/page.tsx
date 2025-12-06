@@ -1,6 +1,8 @@
+"use server";
+
 import { getModels } from "@/lib/dashboard-mgt-bff/api";
 import { defaultId } from "@/protoype";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import {
   Table,
   TableBody,
@@ -16,16 +18,20 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { getTranslations } from "next-intl/server";
 
 export default async function ModelPage() {
   const models = await getModels(defaultId);
+  const t = await getTranslations("ModelPage");
 
   if (!models || models.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center w-full max-w-6xl mx-auto px-4 sm:px-6">
         <Card>
           <CardContent className="pt-6">
-            <p className="text-center text-muted-foreground">No models found</p>
+            <p className="text-center text-muted-foreground">
+              {t("noModelsFound")}
+            </p>
           </CardContent>
         </Card>
       </div>
@@ -36,15 +42,15 @@ export default async function ModelPage() {
     <div className="flex flex-col items-center justify-center w-full max-w-6xl mx-auto px-4 sm:px-6">
       <Card className="w-full">
         <CardHeader>
-          <CardTitle>Models</CardTitle>
-          <CardDescription>List of all models</CardDescription>
+          <CardTitle>{t("models")}</CardTitle>
+          <CardDescription>{t("listOfAllModels")}</CardDescription>
         </CardHeader>
         <CardContent>
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Name</TableHead>
-                <TableHead className="text-right">Rooms</TableHead>
+                <TableHead>{t("name")}</TableHead>
+                <TableHead className="text-right">{t("rooms")}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>

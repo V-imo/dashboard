@@ -1,7 +1,7 @@
 "use client";
 
-import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { Link } from "@/i18n/navigation";
+import { useRouter } from "@/i18n/navigation";
 import {
   Card,
   CardContent,
@@ -11,9 +11,11 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { HomeIcon, ArrowLeftIcon } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 export default function NotFound() {
   const router = useRouter();
+  const t = useTranslations("NotFound");
 
   return (
     <div className="flex flex-col items-center justify-center min-h-[60vh] w-full gap-6 px-4">
@@ -22,22 +24,20 @@ export default function NotFound() {
           <div className="text-6xl font-bold text-muted-foreground mb-4">
             404
           </div>
-          <CardTitle className="text-2xl">Page Not Found</CardTitle>
-          <CardDescription>
-            The page you're looking for doesn't exist or has been moved.
-          </CardDescription>
+          <CardTitle className="text-2xl">{t("pageNotFound")}</CardTitle>
+          <CardDescription>{t("pageNotFoundDesc")}</CardDescription>
         </CardHeader>
         <CardContent className="flex flex-col gap-4">
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
             <Button asChild>
               <Link href="/">
                 <HomeIcon className="w-4 h-4 mr-2" />
-                Go Home
+                {t("goHome")}
               </Link>
             </Button>
             <Button variant="outline" onClick={() => router.back()}>
               <ArrowLeftIcon className="w-4 h-4 mr-2" />
-              Go Back
+              {t("goBack")}
             </Button>
           </div>
         </CardContent>

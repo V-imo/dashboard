@@ -1,3 +1,5 @@
+"use server";
+
 import {
   Card,
   CardContent,
@@ -11,16 +13,19 @@ import { MapPin, Mail, Phone, User, Home } from "lucide-react";
 import { getElementTypeConfig } from "../shared/element-type-icon";
 import { Badge } from "../ui/badge";
 import InspectionsCarousel from "./inspections-carousel";
+import { getTranslations } from "next-intl/server";
 
 interface PropertyDisplayProps {
   property: Property;
   inspections: Inspection[];
 }
 
-export default function PropertyDisplay({
+export default async function PropertyDisplay({
   property,
   inspections,
 }: PropertyDisplayProps) {
+  const t = await getTranslations("PropertyDisplay");
+  const tShared = await getTranslations("Shared");
   const fullAddress = `${property.address.number} ${property.address.street}, ${property.address.city} ${property.address.zipCode}, ${property.address.country}`;
 
   return (
@@ -33,10 +38,10 @@ export default function PropertyDisplay({
             <div className="flex items-center gap-2">
               <MapPin className="w-5 h-5 text-muted-foreground" />
               <CardTitle className="text-base sm:text-lg">
-                Property Address
+                {t("propertyAddress")}
               </CardTitle>
             </div>
-            <CardDescription>Location details of the property</CardDescription>
+            <CardDescription>{t("locationDetails")}</CardDescription>
           </CardHeader>
           <CardContent>
             <p className="text-sm font-medium break-words">{fullAddress}</p>
@@ -50,17 +55,17 @@ export default function PropertyDisplay({
               <div className="flex items-center gap-2">
                 <User className="w-5 h-5 text-muted-foreground" />
                 <CardTitle className="text-base sm:text-lg">
-                  Property Owner
+                  {t("propertyOwner")}
                 </CardTitle>
               </div>
-              <CardDescription>
-                Contact information of the property owner
-              </CardDescription>
+              <CardDescription>{t("contactInfo")}</CardDescription>
             </CardHeader>
             <CardContent className="flex flex-col gap-4">
               <div className="flex gap-2">
                 <div className="flex-1 min-w-0">
-                  <Label className="text-xs text-muted-foreground">Name</Label>
+                  <Label className="text-xs text-muted-foreground">
+                    {t("name")}
+                  </Label>
                   <p className="text-sm font-medium break-words">
                     {property.owner.firstName} {property.owner.lastName}
                   </p>
@@ -71,7 +76,7 @@ export default function PropertyDisplay({
                   <Mail className="w-5 h-5 text-muted-foreground mt-0.5 flex-shrink-0" />
                   <div className="flex-1 min-w-0">
                     <Label className="text-xs text-muted-foreground">
-                      Email
+                      {t("email")}
                     </Label>
                     <p className="text-sm font-medium break-words">
                       {property.owner.mail}
@@ -84,7 +89,7 @@ export default function PropertyDisplay({
                   <Phone className="w-5 h-5 text-muted-foreground mt-0.5 flex-shrink-0" />
                   <div className="flex-1 min-w-0">
                     <Label className="text-xs text-muted-foreground">
-                      Phone Number
+                      {t("phoneNumber")}
                     </Label>
                     <p className="text-sm font-medium break-words">
                       {property.owner.phoneNumber}
@@ -109,14 +114,16 @@ export default function PropertyDisplay({
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
             <div className="flex items-center gap-2">
               <Home className="w-5 h-5 text-muted-foreground" />
-              <CardTitle className="text-base sm:text-lg">Rooms</CardTitle>
+              <CardTitle className="text-base sm:text-lg">
+                {t("rooms")}
+              </CardTitle>
             </div>
             <Badge variant="secondary" className="text-sm w-fit">
-              {property.rooms?.length || 0} room
-              {property.rooms?.length !== 1 ? "s" : ""}
+              {property.rooms?.length || 0}{" "}
+              {property.rooms?.length !== 1 ? t("rooms") : t("room")}
             </Badge>
           </div>
-          <CardDescription>Rooms and elements in the property</CardDescription>
+          <CardDescription>{t("roomsAndElements")}</CardDescription>
         </CardHeader>
         <CardContent className="flex flex-col gap-4 sm:gap-6">
           {property.rooms && property.rooms.length > 0 ? (
@@ -133,7 +140,7 @@ export default function PropertyDisplay({
                       </h4>
                       {room.area && (
                         <p className="text-sm text-muted-foreground">
-                          {room.area} m²
+                          {room.area} {tShared("squareMeters")}
                         </p>
                       )}
                     </div>
@@ -142,8 +149,10 @@ export default function PropertyDisplay({
                         variant="outline"
                         className="text-xs flex-shrink-0"
                       >
-                        {room.elements.length} element
-                        {room.elements.length !== 1 ? "s" : ""}
+                        {room.elements.length}{" "}
+                        {room.elements.length !== 1
+                          ? t("elements")
+                          : t("element")}
                       </Badge>
                     )}
                   </div>
@@ -155,7 +164,7 @@ export default function PropertyDisplay({
                   {room.elements && room.elements.length > 0 && (
                     <div className="space-y-2 pt-2 border-t">
                       <Label className="text-xs text-muted-foreground">
-                        Elements
+                        {t("elements")}
                       </Label>
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                         {room.elements.map((element, elementIndex) => {
@@ -188,7 +197,7 @@ export default function PropertyDisplay({
             </div>
           ) : (
             <p className="text-sm text-muted-foreground text-center py-4">
-              No rooms defined
+              {t("noRoomsDefined")}
             </p>
           )}
         </CardContent>

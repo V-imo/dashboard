@@ -1,5 +1,7 @@
+"use server"
+
 import CreatePropertyForm from "@/components/property/create-form";
 
-export default function NewPropertyPage() {
+export default async function NewPropertyPage() {
   return <CreatePropertyForm />;
 }

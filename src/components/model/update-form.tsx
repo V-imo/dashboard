@@ -1,16 +1,14 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter } from "@/i18n/navigation";
 import { updateModel, deleteModel } from "@/lib/dashboard-mgt-bff/api";
 import { Model } from "@/lib/dashboard-mgt-bff";
 import { defaultId } from "@/protoype";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
-import { Label } from "../ui/label";
 import {
   Card,
-  CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
@@ -18,9 +16,11 @@ import {
 import { toast } from "sonner";
 import { Loader2, TrashIcon, PencilIcon } from "lucide-react";
 import RoomsManager from "../shared/rooms-manager";
+import { useTranslations } from "next-intl";
 
 export default function UpdateModelForm(props: { model?: Model }) {
   const router = useRouter();
+  const t = useTranslations("ModelUpdateForm");
   const [loading, setLoading] = useState(false);
   const [isEditingName, setIsEditingName] = useState(false);
   const [model, setModel] = useState<Model>(
@@ -51,10 +51,10 @@ export default function UpdateModelForm(props: { model?: Model }) {
         modelId: props.model?.modelId || model.modelId,
         agencyId: props.model?.agencyId || model.agencyId,
       });
-      toast.success("Model updated successfully");
+      toast.success(t("modelUpdatedSuccess"));
       router.refresh(); // This will re-fetch the server-side data
     } catch (error) {
-      toast.error("Failed to update model");
+      toast.error(t("failedToUpdateModel"));
       console.error(error);
     } finally {
       setLoading(false);
@@ -62,17 +62,17 @@ export default function UpdateModelForm(props: { model?: Model }) {
   };
 
   const handleDelete = async () => {
-    if (!confirm("Are you sure you want to delete this model?")) {
+    if (!confirm(t("areYouSureDelete"))) {
       return;
     }
 
     try {
       setLoading(true);
       await deleteModel(defaultId, model.modelId);
-      toast.success("Model deleted successfully");
+      toast.success(t("modelDeletedSuccess"));
       router.push("/model");
     } catch (error) {
-      toast.error("Failed to delete model");
+      toast.error(t("failedToDeleteModel"));
       console.error(error);
     } finally {
       setLoading(false);
@@ -103,7 +103,7 @@ export default function UpdateModelForm(props: { model?: Model }) {
                     setIsEditingName(false);
                   }
                 }}
-                placeholder="Model name"
+                placeholder={t("modelName")}
                 className="text-lg font-semibold"
                 autoFocus={isEditingName}
               />
@@ -122,9 +122,7 @@ export default function UpdateModelForm(props: { model?: Model }) {
               )}
             </div>
           </div>
-          <CardDescription>
-            Update the model information and rooms
-          </CardDescription>
+          <CardDescription>{t("updateModelInfo")}</CardDescription>
         </CardHeader>
       </Card>
 
@@ -138,16 +136,16 @@ export default function UpdateModelForm(props: { model?: Model }) {
       <div className="flex justify-end gap-2">
         <Button onClick={handleDelete} variant="destructive" size="lg">
           <TrashIcon className="w-4 h-4 mr-2" />
-          Delete Model
+          {t("deleteModel")}
         </Button>
         <Button onClick={submit} size="lg">
           {loading ? (
             <>
               <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-              Updating...
+              {t("updating")}
             </>
           ) : (
-            "Update Model"
+            t("updateModel")
           )}
         </Button>
       </div>

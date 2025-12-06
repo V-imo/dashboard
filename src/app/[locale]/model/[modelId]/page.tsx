@@ -1,9 +1,11 @@
+"use server";
+
 import UpdateModelForm from "@/components/model/update-form";
 import ModelDisplay from "@/components/model/display";
 import { getModel } from "@/lib/dashboard-mgt-bff/api";
 import { defaultId } from "@/protoype";
 import { notFound } from "next/navigation";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import { Button } from "@/components/ui/button";
 import { PencilIcon, XIcon } from "lucide-react";
 

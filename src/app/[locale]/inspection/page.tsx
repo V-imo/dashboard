@@ -1,6 +1,8 @@
+"use server";
+
 import { getInspections, getProperties } from "@/lib/dashboard-mgt-bff/api";
 import { defaultId } from "@/protoype";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import InspectionStatusBadge from "@/components/inspection/status-badge";
 import {
   Table,
@@ -17,10 +19,14 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { getTranslations, getLocale } from "next-intl/server";
 
 export default async function InspectionPage() {
   const inspections = await getInspections(defaultId);
   const properties = await getProperties(defaultId);
+  const t = await getTranslations("InspectionPage");
+  const tPropertyPage = await getTranslations("PropertyPage");
+  const locale = await getLocale();
 
   if (!inspections || inspections.length === 0) {
     return (
@@ -28,7 +34,7 @@ export default async function InspectionPage() {
         <Card>
           <CardContent className="pt-6">
             <p className="text-center text-muted-foreground">
-              No inspections found
+              {t("noInspectionsFound")}
             </p>
           </CardContent>
         </Card>
@@ -40,16 +46,16 @@ export default async function InspectionPage() {
     <div className="flex flex-col items-center justify-center w-full max-w-6xl mx-auto px-4 sm:px-6">
       <Card className="w-full">
         <CardHeader>
-          <CardTitle>Inspections</CardTitle>
-          <CardDescription>List of all inspections</CardDescription>
+          <CardTitle>{t("inspections")}</CardTitle>
+          <CardDescription>{t("listOfAllInspections")}</CardDescription>
         </CardHeader>
         <CardContent>
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Status</TableHead>
-                <TableHead>Date</TableHead>
-                <TableHead>Property Address</TableHead>
+                <TableHead>{t("status")}</TableHead>
+                <TableHead>{t("date")}</TableHead>
+                <TableHead>{tPropertyPage("address")}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -58,15 +64,15 @@ export default async function InspectionPage() {
                   (property) => property.propertyId === inspection.propertyId
                 );
                 const inspectionDate = inspection.date
-                  ? new Date(inspection.date).toLocaleDateString("en-US", {
+                  ? new Date(inspection.date).toLocaleDateString(locale, {
                       year: "numeric",
                       month: "short",
                       day: "numeric",
                     })
-                  : "N/A";
+                  : tPropertyPage("nA");
                 const propertyAddress = property
                   ? `${property.address.number} ${property.address.street}, ${property.address.city}`
-                  : "N/A";
+                  : tPropertyPage("nA");
                 return (
                   <TableRow
                     key={inspection.inspectionId}

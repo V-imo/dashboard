@@ -16,6 +16,7 @@ import { Property, Inspection } from "@/lib/dashboard-mgt-bff";
 import { getElementTypeConfig } from "../shared/element-type-icon";
 import ElementStateBadge from "../shared/element-state-badge";
 import { cn } from "@/lib/utils";
+import { useTranslations } from "next-intl";
 
 type PropertyRoom = Property["rooms"][number];
 type PropertyElement = PropertyRoom["elements"][number];
@@ -38,6 +39,7 @@ export default function InspectionElementEditor({
   onRemove,
   isAdditional = false,
 }: InspectionElementEditorProps) {
+  const t = useTranslations("InspectionElementEditor");
   const [isExpanded, setIsExpanded] = useState(false);
 
   const handleStateSelect = (state: "NEW" | "GOOD" | "BAD" | "BROKEN") => {
@@ -63,7 +65,7 @@ export default function InspectionElementEditor({
           {isAdditional && onRemove && (
             <Button onClick={onRemove} variant="destructive" size="sm">
               <TrashIcon className="w-4 h-4 mr-2" />
-              Remove
+              {t("remove")}
             </Button>
           )}
         </div>
@@ -73,26 +75,24 @@ export default function InspectionElementEditor({
           </CardDescription>
         )}
         {isAdditional && (
-          <CardDescription>
-            Element added during inspection
-          </CardDescription>
+          <CardDescription>{t("elementAddedDuringInspection")}</CardDescription>
         )}
       </CardHeader>
       <CardContent className="flex flex-col gap-4">
         <div>
           <Label htmlFor={`element-${elementKey}-description`}>
-            Description
+            {t("description")}
           </Label>
           <Input
             id={`element-${elementKey}-description`}
             type="text"
             value={element.description || ""}
             onChange={(e) => onUpdate({ description: e.target.value })}
-            placeholder="Inspection-specific description (optional)"
+            placeholder={t("inspectionSpecificDesc")}
           />
         </div>
         <div className="flex flex-col gap-2">
-          <Label>State</Label>
+          <Label>{t("state")}</Label>
           <div className="flex flex-wrap gap-2">
             {isExpanded ? (
               (["NEW", "GOOD", "BAD", "BROKEN"] as const).map((state) => (

@@ -1,3 +1,5 @@
+"use server";
+
 import {
   Card,
   CardContent,
@@ -12,25 +14,28 @@ import InspectionStatusBadge from "./status-badge";
 import ElementStateBadge from "../shared/element-state-badge";
 import { getElementTypeConfig } from "../shared/element-type-icon";
 import { Badge } from "../ui/badge";
+import { getTranslations, getLocale } from "next-intl/server";
 
 interface InspectionDisplayProps {
   inspection: Inspection;
   property?: Property;
 }
 
-export default function InspectionDisplay({
+export default async function InspectionDisplay({
   inspection,
   property,
 }: InspectionDisplayProps) {
+  const t = await getTranslations("InspectionDisplay");
+  const locale = await getLocale();
   const inspectionDate = inspection.date
-    ? new Date(inspection.date).toLocaleDateString("en-US", {
+    ? new Date(inspection.date).toLocaleDateString(locale, {
         year: "numeric",
         month: "long",
         day: "numeric",
         hour: "2-digit",
         minute: "2-digit",
       })
-    : "Not set";
+    : t("notSet");
 
   // Create a map of property elements by room name for reference
   const propertyElementsByRoom = new Map<string, Map<string, string>>();
@@ -53,18 +58,20 @@ export default function InspectionDisplay({
             <div className="flex items-center gap-2">
               <Calendar className="w-5 h-5 text-muted-foreground" />
               <CardTitle className="text-base sm:text-lg">
-                Inspection Details
+                {t("inspectionDetails")}
               </CardTitle>
             </div>
             <InspectionStatusBadge status={inspection.status} />
           </div>
-          <CardDescription>Inspection information and status</CardDescription>
+          <CardDescription>{t("inspectionInfo")}</CardDescription>
         </CardHeader>
         <CardContent className="flex flex-col gap-4">
           <div className="flex items-start gap-3">
             <Calendar className="w-5 h-5 text-muted-foreground mt-0.5 flex-shrink-0" />
             <div className="flex-1 min-w-0">
-              <Label className="text-xs text-muted-foreground">Date</Label>
+              <Label className="text-xs text-muted-foreground">
+                {t("date")}
+              </Label>
               <p className="text-sm font-medium break-words">
                 {inspectionDate}
               </p>
@@ -75,7 +82,7 @@ export default function InspectionDisplay({
               <UserCheck className="w-5 h-5 text-muted-foreground mt-0.5 flex-shrink-0" />
               <div className="flex-1 min-w-0">
                 <Label className="text-xs text-muted-foreground">
-                  Inspector ID
+                  {t("inspectorId")}
                 </Label>
                 <p className="text-sm font-medium break-words">
                   {inspection.inspectorId}
@@ -93,17 +100,15 @@ export default function InspectionDisplay({
             <div className="flex items-center gap-2">
               <Home className="w-5 h-5 text-muted-foreground" />
               <CardTitle className="text-base sm:text-lg">
-                Inspection Rooms
+                {t("inspectionRooms")}
               </CardTitle>
             </div>
             <Badge variant="secondary" className="text-sm w-fit">
-              {inspection.rooms?.length || 0} room
-              {inspection.rooms?.length !== 1 ? "s" : ""}
+              {inspection.rooms?.length || 0}{" "}
+              {inspection.rooms?.length !== 1 ? t("rooms") : t("room")}
             </Badge>
           </div>
-          <CardDescription>
-            Rooms and elements inspected during this inspection
-          </CardDescription>
+          <CardDescription>{t("roomsAndElementsInspected")}</CardDescription>
         </CardHeader>
         <CardContent className="flex flex-col gap-4 sm:gap-6">
           {inspection.rooms && inspection.rooms.length > 0 ? (
@@ -133,15 +138,17 @@ export default function InspectionDisplay({
                           variant="outline"
                           className="text-xs flex-shrink-0"
                         >
-                          {room.elements.length} element
-                          {room.elements.length !== 1 ? "s" : ""}
+                          {room.elements.length}{" "}
+                          {room.elements.length !== 1
+                            ? t("elements")
+                            : t("element")}
                         </Badge>
                       )}
                     </div>
                     {room.elements && room.elements.length > 0 && (
                       <div className="space-y-2 pt-2 border-t">
                         <Label className="text-xs text-muted-foreground">
-                          Elements
+                          {t("elements")}
                         </Label>
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                           {room.elements.map((element, elementIndex) => {
@@ -187,7 +194,7 @@ export default function InspectionDisplay({
             </div>
           ) : (
             <p className="text-sm text-muted-foreground text-center py-4">
-              No rooms inspected
+              {t("noRoomsInspected")}
             </p>
           )}
         </CardContent>

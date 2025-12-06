@@ -21,6 +21,7 @@ import {
   SelectValue,
 } from "../ui/select";
 import InspectionElementEditor from "./element-editor";
+import { useTranslations } from "next-intl";
 
 type PropertyRoom = Property["rooms"][number];
 type PropertyElement = PropertyRoom["elements"][number];
@@ -38,6 +39,7 @@ export default function InspectionRoomsManager({
   inspectionRooms,
   onChange,
 }: InspectionRoomsManagerProps) {
+  const t = useTranslations("InspectionRoomsManager");
   const [selectedRoomIndex, setSelectedRoomIndex] = useState<number | null>(
     propertyRooms.length > 0 ? 0 : null
   );
@@ -199,8 +201,8 @@ export default function InspectionRoomsManager({
     return (
       <Card>
         <CardHeader>
-          <CardTitle>Inspection Rooms</CardTitle>
-          <CardDescription>No rooms available in this property</CardDescription>
+          <CardTitle>{t("inspectionRooms")}</CardTitle>
+          <CardDescription>{t("noRoomsAvailable")}</CardDescription>
         </CardHeader>
       </Card>
     );
@@ -217,11 +219,8 @@ export default function InspectionRoomsManager({
     <div className="flex flex-col gap-6 max-w-4xl w-full">
       <Card>
         <CardHeader>
-          <CardTitle>Inspection Rooms</CardTitle>
-          <CardDescription>
-            Select rooms and inspect elements directly. Add new elements if
-            needed.
-          </CardDescription>
+          <CardTitle>{t("inspectionRooms")}</CardTitle>
+          <CardDescription>{t("selectRoomsAndInspect")}</CardDescription>
         </CardHeader>
         <CardContent className="flex flex-col gap-6">
           {useButtons ? (
@@ -236,7 +235,7 @@ export default function InspectionRoomsManager({
                     onClick={() => setSelectedRoomIndex(index)}
                     size="sm"
                   >
-                    {room.name || `Room ${index + 1}`}
+                    {room.name || `${t("room")} ${index + 1}`}
                   </Button>
                 ))}
               </div>
@@ -256,7 +255,7 @@ export default function InspectionRoomsManager({
           ) : (
             <div className="flex flex-col gap-4">
               <div>
-                <Label>Select Room</Label>
+                <Label>{t("selectRoom")}</Label>
                 <Select
                   value={selectedRoomIndex?.toString() || ""}
                   onValueChange={(value) =>
@@ -264,12 +263,12 @@ export default function InspectionRoomsManager({
                   }
                 >
                   <SelectTrigger>
-                    <SelectValue placeholder="Select a room" />
+                    <SelectValue placeholder={t("selectARoom")} />
                   </SelectTrigger>
                   <SelectContent>
                     {propertyRooms.map((room, index) => (
                       <SelectItem key={index} value={index.toString()}>
-                        {room.name || `Room ${index + 1}`}
+                        {room.name || `${t("room")} ${index + 1}`}
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -321,6 +320,7 @@ function RoomContent({
   newElementName,
   setNewElementName,
 }: RoomContentProps) {
+  const t = useTranslations("InspectionRoomsManager");
   // Get inspection element for a property element, or create default
   const getElementForProperty = (
     propertyElement: PropertyElement
@@ -354,7 +354,7 @@ function RoomContent({
         )}
         <div>
           <Label htmlFor={`room-${propertyRoom.name}-description`}>
-            Room Description
+            {t("roomDescription")}
           </Label>
           <Input
             id={`room-${propertyRoom.name}-description`}
@@ -363,7 +363,7 @@ function RoomContent({
             onChange={(e) =>
               onUpdateDescription(propertyRoom.name, e.target.value)
             }
-            placeholder="Inspection-specific room description (optional)"
+            placeholder={t("inspectionSpecificRoomDesc")}
           />
         </div>
       </div>
@@ -371,7 +371,7 @@ function RoomContent({
       {/* Property Elements - Direct editing */}
       {propertyRoom.elements.length > 0 && (
         <div className="flex flex-col gap-4">
-          <Label className="text-base font-semibold">Property Elements</Label>
+          <Label className="text-base font-semibold">{t("propertyElements")}</Label>
           <div className="flex flex-col gap-4">
             {propertyRoom.elements.map((propertyElement, index) => {
               const element = getElementForProperty(propertyElement);
@@ -399,7 +399,7 @@ function RoomContent({
       {/* Inspection-Only Elements (not from property) */}
       {inspectionOnlyElements.length > 0 && (
         <div className="flex flex-col gap-4">
-          <Label className="text-base font-semibold">Additional Elements</Label>
+          <Label className="text-base font-semibold">{t("additionalElements")}</Label>
           <div className="flex flex-col gap-4">
             {inspectionOnlyElements.map((element, elementIndex) => (
               <InspectionElementEditor
@@ -427,7 +427,7 @@ function RoomContent({
 
       {/* Add New Element Section */}
       <div className="flex flex-col gap-3">
-        <Label>Add New Element</Label>
+        <Label>{t("addNewElement")}</Label>
         <div className="flex gap-2">
           <Input
             type="text"
@@ -438,7 +438,7 @@ function RoomContent({
                 onAddNewElement();
               }
             }}
-            placeholder="Element name"
+            placeholder={t("elementName")}
             className="flex-1"
           />
           <Button
@@ -447,7 +447,7 @@ function RoomContent({
             variant="outline"
           >
             <PlusIcon className="w-4 h-4 mr-2" />
-            Add
+            {t("add")}
           </Button>
         </div>
       </div>

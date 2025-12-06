@@ -1,8 +1,10 @@
+"use server";
+
 import CreateInspectionForm from "@/components/inspection/create-form";
 import { getProperty } from "@/lib/dashboard-mgt-bff/api";
 import { defaultId } from "@/protoype";
 import { ArrowLeftIcon } from "lucide-react";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import { notFound } from "next/navigation";
 
 export default async function NewInspectionPage({
