@@ -24,6 +24,9 @@ import {
   Package,
 } from "lucide-react";
 import { Element } from "./rooms-manager";
+import { useTranslations } from "next-intl";
+
+type ElementTypeKey = "furniture" | "structural" | "electrical" | "plumbing" | "ventilation" | "surface" | "other";
 
 export type ElementType =
   | "FURNITURE"
@@ -34,17 +37,17 @@ export type ElementType =
   | "SURFACE"
   | "OTHER";
 
-const elementTypeConfig: Record<
+const elementTypeIcons: Record<
   ElementType,
-  { label: string; icon: React.ComponentType<{ className?: string }> }
+  React.ComponentType<{ className?: string }>
 > = {
-  FURNITURE: { label: "Furniture", icon: Sofa },
-  STRUCTURAL: { label: "Structural", icon: Building2 },
-  ELECTRICAL: { label: "Electrical", icon: Zap },
-  PLUMBING: { label: "Plumbing", icon: Droplet },
-  VENTILATION: { label: "Ventilation", icon: Wind },
-  SURFACE: { label: "Surface", icon: Square },
-  OTHER: { label: "Other", icon: Package },
+  FURNITURE: Sofa,
+  STRUCTURAL: Building2,
+  ELECTRICAL: Zap,
+  PLUMBING: Droplet,
+  VENTILATION: Wind,
+  SURFACE: Square,
+  OTHER: Package,
 };
 
 interface ElementManagerProps {
@@ -62,6 +65,7 @@ export default function ElementManager({
   onUpdate,
   onRemove,
 }: ElementManagerProps) {
+  const t = useTranslations("ElementManager");
   const [isEditingName, setIsEditingName] = useState(
     element.name === "" ? true : false
   );
@@ -93,7 +97,7 @@ export default function ElementManager({
                       setIsEditingName(false);
                     }
                   }}
-                  placeholder="e.g., Window, Door, Floor"
+                  placeholder={t("elementNamePlaceholder")}
                   className="text-base font-semibold"
                   autoFocus={isEditingName}
                 />
@@ -125,14 +129,14 @@ export default function ElementManager({
           <Label
             htmlFor={`room-${roomIndex}-element-${elementIndex}-description`}
           >
-            Description
+            {t("description")}
           </Label>
           <Input
             id={`room-${roomIndex}-element-${elementIndex}-description`}
             type="text"
             value={element.description || ""}
             onChange={(e) => onUpdate({ description: e.target.value })}
-            placeholder="Element description (optional)"
+            placeholder={t("elementDescriptionOptional")}
           />
         </div>
       </CardContent>
@@ -147,6 +151,8 @@ const TypeSelector = ({
   type: ElementType;
   onUpdate: (type: ElementType) => void;
 }) => {
+  const t = useTranslations("ElementManager");
+  const tType = useTranslations("ElementTypeIcon");
   return (
     <Select
       value={type || "OTHER"}
@@ -156,25 +162,24 @@ const TypeSelector = ({
         {type ? (
           <div className="flex items-center gap-2">
             {(() => {
-              const Icon = elementTypeConfig[type as ElementType]?.icon;
+              const Icon = elementTypeIcons[type as ElementType];
               return Icon ? <Icon className="w-4 h-4" /> : null;
             })()}
             <SelectValue>
-              {elementTypeConfig[type as ElementType]?.label}
+              {tType(type.toLowerCase() as ElementTypeKey)}
             </SelectValue>
           </div>
         ) : (
-          <SelectValue placeholder="Select Type" />
+          <SelectValue placeholder={t("selectType")} />
         )}
       </SelectTrigger>
       <SelectContent>
-        {Object.entries(elementTypeConfig).map(([value, config]) => {
-          const Icon = config.icon;
+        {Object.entries(elementTypeIcons).map(([value, Icon]) => {
           return (
             <SelectItem key={value} value={value}>
               <div className="flex items-center gap-2">
                 <Icon className="w-4 h-4" />
-                {config.label}
+                {tType(value.toLowerCase() as ElementTypeKey)}
               </div>
             </SelectItem>
           );

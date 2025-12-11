@@ -1,4 +1,7 @@
+"use client";
+
 import { cn } from "@/lib/utils";
+import { useTranslations } from "next-intl";
 
 type ElementState = "GOOD" | "BAD" | "NEW" | "BROKEN";
 
@@ -7,27 +10,24 @@ interface ElementStateBadgeProps {
   className?: string;
 }
 
-const stateConfig: Record<
-  ElementState,
-  { label: string; variant: string }
-> = {
+const stateConfig: Record<ElementState, { key: string; variant: string }> = {
   GOOD: {
-    label: "Good",
+    key: "good",
     variant:
       "bg-green-100 text-green-800 border-green-300 dark:bg-green-900/20 dark:text-green-400 dark:border-green-800",
   },
   BAD: {
-    label: "Bad",
+    key: "bad",
     variant:
       "bg-red-100 text-red-800 border-red-300 dark:bg-red-900/20 dark:text-red-400 dark:border-red-800",
   },
   NEW: {
-    label: "New",
+    key: "new",
     variant:
       "bg-blue-100 text-blue-800 border-blue-300 dark:bg-blue-900/20 dark:text-blue-400 dark:border-blue-800",
   },
   BROKEN: {
-    label: "Broken",
+    key: "broken",
     variant:
       "bg-orange-100 text-orange-800 border-orange-300 dark:bg-orange-900/20 dark:text-orange-400 dark:border-orange-800",
   },
@@ -37,6 +37,7 @@ export default function ElementStateBadge({
   state,
   className,
 }: ElementStateBadgeProps) {
+  const t = useTranslations("ElementStateBadge");
   const config = stateConfig[state];
 
   return (
@@ -47,9 +48,7 @@ export default function ElementStateBadge({
         className
       )}
     >
-      {config.label}
+      {t(config.key)}
     </span>
   );
 }
-
-
