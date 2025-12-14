@@ -26,7 +26,14 @@ import {
 import { Element } from "./rooms-manager";
 import { useTranslations } from "next-intl";
 
-type ElementTypeKey = "furniture" | "structural" | "electrical" | "plumbing" | "ventilation" | "surface" | "other";
+type ElementTypeKey =
+  | "furniture"
+  | "structural"
+  | "electrical"
+  | "plumbing"
+  | "ventilation"
+  | "surface"
+  | "other";
 
 export type ElementType =
   | "FURNITURE"

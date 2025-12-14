@@ -371,7 +371,9 @@ function RoomContent({
       {/* Property Elements - Direct editing */}
       {propertyRoom.elements.length > 0 && (
         <div className="flex flex-col gap-4">
-          <Label className="text-base font-semibold">{t("propertyElements")}</Label>
+          <Label className="text-base font-semibold">
+            {t("propertyElements")}
+          </Label>
           <div className="flex flex-col gap-4">
             {propertyRoom.elements.map((propertyElement, index) => {
               const element = getElementForProperty(propertyElement);
@@ -399,7 +401,9 @@ function RoomContent({
       {/* Inspection-Only Elements (not from property) */}
       {inspectionOnlyElements.length > 0 && (
         <div className="flex flex-col gap-4">
-          <Label className="text-base font-semibold">{t("additionalElements")}</Label>
+          <Label className="text-base font-semibold">
+            {t("additionalElements")}
+          </Label>
           <div className="flex flex-col gap-4">
             {inspectionOnlyElements.map((element, elementIndex) => (
               <InspectionElementEditor

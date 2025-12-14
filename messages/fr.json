@@ -13,7 +13,8 @@
     "allPropertiesDesc": "Voir et gérer toutes les propriétés",
     "createPropertyDesc": "Ajouter une nouvelle propriété au système",
     "modelDesc": "Voir et gérer les modèles",
-    "propertiesDesc": "Gérez vos propriétés et les informations associées."
+    "propertiesDesc": "Gérez vos propriétés et les informations associées.",
+    "signOut": "Déconnexion"
   },
   "AgencyDisplay": {
     "agencyInformation": "Informations sur l'agence",
@@ -320,5 +321,31 @@
     "pageNotFoundDesc": "La page que vous recherchez n'existe pas ou a été déplacée.",
     "goHome": "Retour à l'accueil",
     "goBack": "Retour"
+  },
+  "LoginForm": {
+    "signIn": "Se connecter",
+    "enterCredentials": "Entrez vos identifiants pour vous connecter",
+    "setNewPassword": "Lors de votre première connexion, pour des raisons de sécurité, vous devez mettre à jour le mot de passe temporaire de notre système par votre mot de passe sécurisé. Veuillez définir un nouveau mot de passe ci-dessous.",
+    "email": "Email",
+    "username": "Email",
+    "password": "Mot de passe",
+    "newPassword": "Nouveau mot de passe",
+    "confirmNewPassword": "Confirmer le nouveau mot de passe",
+    "signingIn": "Connexion...",
+    "changingPassword": "Changement du mot de passe...",
+    "changePassword": "Changer le mot de passe",
+    "loginSuccess": "Connexion réussie",
+    "loginFailed": "Échec de la connexion",
+    "invalidCredentials": "Email ou mot de passe invalide",
+    "newPasswordRequired": "Pour des raisons de sécurité, vous devez remplacer le mot de passe temporaire par un mot de passe sécurisé lors de votre première connexion. Veuillez définir votre nouveau mot de passe ci-dessous.",
+    "passwordChangeFailed": "Échec du changement de mot de passe",
+    "passwordChangedSuccess": "Mot de passe changé avec succès",
+    "passwordsDoNotMatch": "Les mots de passe ne correspondent pas",
+    "passwordTooShort": "Le mot de passe doit contenir au moins 8 caractères",
+    "passwordMustHaveUppercase": "Le mot de passe doit contenir au moins une majuscule",
+    "passwordMustHaveLowercase": "Le mot de passe doit contenir au moins une minuscule",
+    "passwordMustHaveNumber": "Le mot de passe doit contenir au moins un chiffre",
+    "passwordMustHaveSpecialChar": "Le mot de passe doit contenir au moins un caractère spécial",
+    "passwordRequirements": "Le mot de passe doit contenir au moins 8 caractères, une majuscule, une minuscule, un chiffre et un caractère spécial"
   }
 }

@@ -20,7 +20,13 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "../ui/dialog";
-import { PlusIcon, TrashIcon, PencilIcon, DownloadIcon, XIcon } from "lucide-react";
+import {
+  PlusIcon,
+  TrashIcon,
+  PencilIcon,
+  DownloadIcon,
+  XIcon,
+} from "lucide-react";
 import { Property, Model } from "@/lib/dashboard-mgt-bff";
 import { getModels } from "@/lib/dashboard-mgt-bff/api";
 import { defaultId } from "@/protoype";
@@ -28,6 +34,7 @@ import { toast } from "sonner";
 import ElementManager from "./element-manager";
 import { cn } from "@/lib/utils";
 import { useTranslations } from "next-intl";
+import { useSession } from "next-auth/react";
 
 export type Room = Property["rooms"][number];
 export type Element = Room["elements"][number];
@@ -39,7 +46,10 @@ interface RoomsManagerProps {
 
 export default function RoomsManager({ rooms, onChange }: RoomsManagerProps) {
   const t = useTranslations("RoomsManager");
-  const [selectedRoomIndex, setSelectedRoomIndex] = useState<number | null>(null);
+  const { data: session } = useSession();
+  const [selectedRoomIndex, setSelectedRoomIndex] = useState<number | null>(
+    null
+  );
   const [editingRoomName, setEditingRoomName] = useState<number | null>(null);
   const [importDialogOpen, setImportDialogOpen] = useState(false);
   const [models, setModels] = useState<Model[]>([]);
@@ -54,7 +64,7 @@ export default function RoomsManager({ rooms, onChange }: RoomsManagerProps) {
   const loadModels = async () => {
     try {
       setLoadingModels(true);
-      const fetchedModels = await getModels(defaultId);
+      const fetchedModels = await getModels(defaultId, session);
       setModels(fetchedModels || []);
     } catch (error) {
       toast.error(t("failedToLoadModels"));
@@ -90,7 +100,7 @@ export default function RoomsManager({ rooms, onChange }: RoomsManagerProps) {
   const removeRoom = (roomIndex: number) => {
     const updatedRooms = rooms.filter((_, index) => index !== roomIndex);
     onChange(updatedRooms);
-    
+
     // Adjust selected room index if needed
     if (selectedRoomIndex === roomIndex) {
       if (updatedRooms.length > 0) {
@@ -150,7 +160,8 @@ export default function RoomsManager({ rooms, onChange }: RoomsManagerProps) {
     }
   }, [rooms.length, selectedRoomIndex]);
 
-  const selectedRoom = selectedRoomIndex !== null ? rooms[selectedRoomIndex] : null;
+  const selectedRoom =
+    selectedRoomIndex !== null ? rooms[selectedRoomIndex] : null;
 
   return (
     <div className="flex flex-col gap-6 max-w-4xl w-full">
@@ -159,14 +170,9 @@ export default function RoomsManager({ rooms, onChange }: RoomsManagerProps) {
           <div className="flex items-center justify-between">
             <div>
               <CardTitle>{t("rooms")}</CardTitle>
-              <CardDescription>
-                {t("addRoomsAndElements")}
-              </CardDescription>
+              <CardDescription>{t("addRoomsAndElements")}</CardDescription>
             </div>
-            <Dialog
-              open={importDialogOpen}
-              onOpenChange={setImportDialogOpen}
-            >
+            <Dialog open={importDialogOpen} onOpenChange={setImportDialogOpen}>
               <DialogTrigger asChild>
                 <Button variant="outline" size="sm">
                   <DownloadIcon className="w-4 h-4 mr-2" />
@@ -383,7 +389,11 @@ export default function RoomsManager({ rooms, onChange }: RoomsManagerProps) {
                         elementIndex={elementIndex}
                         roomIndex={selectedRoomIndex}
                         onUpdate={(updates) =>
-                          updateElement(selectedRoomIndex, elementIndex, updates)
+                          updateElement(
+                            selectedRoomIndex,
+                            elementIndex,
+                            updates
+                          )
                         }
                         onRemove={() =>
                           removeElement(selectedRoomIndex, elementIndex)

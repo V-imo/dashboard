@@ -25,12 +25,14 @@ import { Loader2 } from "lucide-react";
 import { defaultId } from "@/protoype";
 import { Inspection, Property } from "@/lib/dashboard-mgt-bff";
 import { useTranslations } from "next-intl";
+import { useSession } from "next-auth/react";
 
 export default function CreateInspectionForm(props: {
   propertyId: string;
   property?: Property;
 }) {
   const router = useRouter();
+  const { data: session } = useSession();
   const t = useTranslations("InspectionCreateForm");
   const [loading, setLoading] = useState(false);
   const [inspection, setInspection] = useState<
@@ -47,7 +49,14 @@ export default function CreateInspectionForm(props: {
   const submit = async () => {
     try {
       setLoading(true);
-      const inspectionId = await createInspection(inspection as Inspection);
+      const inspectionId = await createInspection(
+        inspection as Inspection,
+        session
+      );
+      if (!inspectionId) {
+        toast.error(t("failedToCreateInspection"));
+        return;
+      }
       toast.success(t("inspectionCreatedSuccess"));
       router.push(`/property/${props.propertyId}/inspection/${inspectionId}`);
     } catch (error) {

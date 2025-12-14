@@ -1,5 +1,6 @@
 "use server";
 
+import { Suspense } from "react";
 import UpdateInspectionForm from "@/components/inspection/update-form";
 import InspectionDisplay from "@/components/inspection/display";
 import { getInspection, getProperty } from "@/lib/dashboard-mgt-bff/api";
@@ -8,23 +9,28 @@ import { HouseIcon, PencilIcon, XIcon } from "lucide-react";
 import { Link } from "@/i18n/navigation";
 import { notFound } from "next/navigation";
 import { Button } from "@/components/ui/button";
+import LoadingBar from "@/components/ui/loading-bar";
+import { auth } from "@/lib/auth";
 
-export default async function InspectionPage({
+async function InspectionDetailPageContent({
   params,
   searchParams,
 }: {
   params: Promise<{ propertyId: string; inspectionId: string }>;
   searchParams: Promise<{ edit?: string }>;
 }) {
-  const { propertyId, inspectionId } = await params;
-  const { edit } = await searchParams;
-  const isEditMode = edit === "true";
-
   try {
-    const [inspection, property] = await Promise.all([
-      getInspection(defaultId, propertyId, inspectionId),
-      getProperty(defaultId, propertyId),
-    ]);
+    const [session, { propertyId, inspectionId }, { edit }] = await Promise.all(
+      [auth(), params, searchParams]
+    );
+    const isEditMode = edit === "true";
+    const inspection = await getInspection(
+      defaultId,
+      propertyId,
+      inspectionId,
+      session
+    );
+    const property = await getProperty(defaultId, propertyId, session);
 
     if (!inspection || !property) {
       notFound();
@@ -67,4 +73,21 @@ export default async function InspectionPage({
   } catch (error) {
     notFound();
   }
+}
+
+export default async function InspectionPage({
+  params,
+  searchParams,
+}: {
+  params: Promise<{ propertyId: string; inspectionId: string }>;
+  searchParams: Promise<{ edit?: string }>;
+}) {
+  return (
+    <Suspense fallback={<LoadingBar />}>
+      <InspectionDetailPageContent
+        params={params}
+        searchParams={searchParams}
+      />
+    </Suspense>
+  );
 }

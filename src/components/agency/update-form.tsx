@@ -18,9 +18,11 @@ import {
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
 import { useTranslations } from "next-intl";
+import { useSession } from "next-auth/react";
 
 export default function UpdateAgencyForm(props: { agency?: Agency }) {
   const router = useRouter();
+  const { data: session } = useSession();
   const t = useTranslations("AgencyUpdateForm");
   const [loading, setLoading] = useState(false);
   const [agency, setAgency] = useState<Agency>(
@@ -49,7 +51,7 @@ export default function UpdateAgencyForm(props: { agency?: Agency }) {
   const submit = async () => {
     try {
       setLoading(true);
-      await updateAgency(agency);
+      await updateAgency(agency, session);
       toast.success(t("agencyUpdatedSuccess"));
       router.refresh(); // This will re-fetch the server-side data
     } catch (error) {

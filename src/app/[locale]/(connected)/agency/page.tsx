@@ -1,5 +1,6 @@
 "use server";
 
+import { Suspense } from "react";
 import UpdateAgencyForm from "@/components/agency/update-form";
 import AgencyDisplay from "@/components/agency/display";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
@@ -8,21 +9,26 @@ import { defaultId } from "@/protoype";
 import { Link } from "@/i18n/navigation";
 import { Button } from "@/components/ui/button";
 import { PencilIcon, XIcon } from "lucide-react";
-import { notFound } from "next/navigation";
+import { unauthorized } from "next/navigation";
 import { getTranslations } from "next-intl/server";
+import LoadingBar from "@/components/ui/loading-bar";
+import { auth } from "@/lib/auth";
 
-export default async function Dashboard({
+async function AgencyPageContent({
   searchParams,
 }: {
   searchParams: Promise<{ edit?: string }>;
 }) {
-  const agency = await getAgency(defaultId);
-  const { edit } = await searchParams;
+  const session = await auth();
+  const [agency, t, { edit }] = await Promise.all([
+    getAgency(defaultId, session),
+    getTranslations("AgencyPage"),
+    searchParams,
+  ]);
   const isEditMode = edit === "true";
-  const t = await getTranslations("AgencyPage");
 
   if (!agency) {
-    notFound();
+    unauthorized();
   }
 
   return (
@@ -57,5 +63,17 @@ export default async function Dashboard({
         <AgencyDisplay agency={agency} />
       )}
     </div>
+  );
+}
+
+export default async function Dashboard({
+  searchParams,
+}: {
+  searchParams: Promise<{ edit?: string }>;
+}) {
+  return (
+    <Suspense fallback={<LoadingBar />}>
+      <AgencyPageContent searchParams={searchParams} />
+    </Suspense>
   );
 }

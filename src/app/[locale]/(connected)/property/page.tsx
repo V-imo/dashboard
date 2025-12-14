@@ -1,5 +1,6 @@
 "use server";
 
+import { Suspense } from "react";
 import { getProperties } from "@/lib/dashboard-mgt-bff/api";
 import { defaultId } from "@/protoype";
 import { Link } from "@/i18n/navigation";
@@ -19,10 +20,15 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { getTranslations } from "next-intl/server";
+import LoadingBar from "@/components/ui/loading-bar";
+import { auth } from "@/lib/auth";
 
-export default async function PropertyPage() {
-  const properties = await getProperties(defaultId);
-  const t = await getTranslations("PropertyPage");
+async function PropertyPageContent() {
+  const session = await auth();
+  const [properties, t] = await Promise.all([
+    getProperties(defaultId, session),
+    getTranslations("PropertyPage"),
+  ]);
 
   if (!properties || properties.length === 0) {
     return (
@@ -97,5 +103,13 @@ export default async function PropertyPage() {
         </CardContent>
       </Card>
     </div>
+  );
+}
+
+export default async function PropertyPage() {
+  return (
+    <Suspense fallback={<LoadingBar />}>
+      <PropertyPageContent />
+    </Suspense>
   );
 }

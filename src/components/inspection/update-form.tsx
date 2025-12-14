@@ -26,12 +26,14 @@ import { Inspection, Property } from "@/lib/dashboard-mgt-bff";
 import DeleteInspectionButton from "./delete-button";
 import InspectionRoomsManager from "./rooms-manager";
 import { useTranslations } from "next-intl";
+import { useSession } from "next-auth/react";
 
 export default function UpdateInspectionForm(props: {
   inspection?: Inspection;
   property?: Property;
 }) {
   const router = useRouter();
+  const { data: session } = useSession();
   const t = useTranslations("InspectionUpdateForm");
   const [loading, setLoading] = useState(false);
   const [inspection, setInspection] = useState<Inspection>(
@@ -64,12 +66,16 @@ export default function UpdateInspectionForm(props: {
   const submit = async () => {
     try {
       setLoading(true);
-      await updateInspection({
-        ...inspection,
-        inspectionId: props.inspection?.inspectionId || inspection.inspectionId,
-        propertyId: props.inspection?.propertyId || inspection.propertyId,
-        agencyId: props.inspection?.agencyId || inspection.agencyId,
-      });
+      await updateInspection(
+        {
+          ...inspection,
+          inspectionId:
+            props.inspection?.inspectionId || inspection.inspectionId,
+          propertyId: props.inspection?.propertyId || inspection.propertyId,
+          agencyId: props.inspection?.agencyId || inspection.agencyId,
+        },
+        session
+      );
       toast.success(t("inspectionUpdatedSuccess"));
       router.refresh();
     } catch (error) {

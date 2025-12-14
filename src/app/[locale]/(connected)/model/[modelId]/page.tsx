@@ -1,5 +1,6 @@
 "use server";
 
+import { Suspense } from "react";
 import UpdateModelForm from "@/components/model/update-form";
 import ModelDisplay from "@/components/model/display";
 import { getModel } from "@/lib/dashboard-mgt-bff/api";
@@ -8,8 +9,10 @@ import { notFound } from "next/navigation";
 import { Link } from "@/i18n/navigation";
 import { Button } from "@/components/ui/button";
 import { PencilIcon, XIcon } from "lucide-react";
+import LoadingBar from "@/components/ui/loading-bar";
+import { auth } from "@/lib/auth";
 
-export default async function ModelPage({
+async function ModelDetailPageContent({
   params,
   searchParams,
 }: {
@@ -17,10 +20,13 @@ export default async function ModelPage({
   searchParams: Promise<{ edit?: string }>;
 }) {
   try {
-    const { modelId } = await params;
-    const { edit } = await searchParams;
+    const [session, {modelId}, {edit}] = await Promise.all([
+      auth(),
+      params,
+      searchParams,
+    ]);
     const isEditMode = edit === "true";
-    const model = await getModel(defaultId, modelId);
+    const model = await getModel(defaultId, modelId, session);
 
     if (!model) {
       notFound();
@@ -55,4 +61,18 @@ export default async function ModelPage({
   } catch (error) {
     notFound();
   }
+}
+
+export default async function ModelPage({
+  params,
+  searchParams,
+}: {
+  params: Promise<{ modelId: string }>;
+  searchParams: Promise<{ edit?: string }>;
+}) {
+  return (
+    <Suspense fallback={<LoadingBar />}>
+      <ModelDetailPageContent params={params} searchParams={searchParams} />
+    </Suspense>
+  );
 }
