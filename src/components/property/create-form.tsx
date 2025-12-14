@@ -26,9 +26,11 @@ import { defaultId } from "@/protoype";
 import { Property } from "@/lib/dashboard-mgt-bff";
 import RoomsManager from "../shared/rooms-manager";
 import { useTranslations } from "next-intl";
+import { useSession } from "next-auth/react";
 
 export default function CreatePropertyForm() {
   const router = useRouter();
+  const { data: session } = useSession();
   const t = useTranslations("PropertyCreateForm");
   const [loading, setLoading] = useState(false);
   const [property, setProperty] = useState<Omit<Property, "propertyId">>({
@@ -52,7 +54,7 @@ export default function CreatePropertyForm() {
   const submit = async () => {
     try {
       setLoading(true);
-      const propertyId = await createProperty(property as Property);
+      const propertyId = await createProperty(property as Property, session);
       toast.success(t("propertyCreatedSuccess"));
       router.push(`/property/${propertyId}`);
     } catch (error) {

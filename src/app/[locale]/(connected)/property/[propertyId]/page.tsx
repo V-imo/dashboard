@@ -1,5 +1,6 @@
 "use server";
 
+import { Suspense } from "react";
 import UpdatePropertyForm from "@/components/property/update-form";
 import PropertyDisplay from "@/components/property/display";
 import {
@@ -12,24 +13,29 @@ import { Link } from "@/i18n/navigation";
 import { Button } from "@/components/ui/button";
 import { PlusIcon, PencilIcon, XIcon } from "lucide-react";
 import CreateModelFromPropertyButton from "@/components/property/create-model-from-property-button";
+import LoadingBar from "@/components/ui/loading-bar";
+import { auth } from "@/lib/auth";
 
-export default async function PropertyPage({
+async function PropertyDetailPageContent({
   params,
   searchParams,
 }: {
   params: Promise<{ propertyId: string }>;
   searchParams: Promise<{ edit?: string }>;
 }) {
-  const { propertyId } = await params;
-  const { edit } = await searchParams;
+  const [session, { propertyId }, { edit }] = await Promise.all([
+    auth(),
+    params,
+    searchParams,
+  ]);
   const isEditMode = edit === "true";
 
   try {
-    const property = await getProperty(defaultId, propertyId);
+    const property = await getProperty(defaultId, propertyId, session);
     if (!property) {
       notFound();
     }
-    const inspections = await getPropertyInspections(defaultId, propertyId);
+    const inspections = await getPropertyInspections(defaultId, propertyId, session);
     return (
       <div className="flex flex-col items-center justify-center w-full gap-6">
         <div className="flex justify-end gap-2 w-full max-w-4xl">
@@ -69,4 +75,18 @@ export default async function PropertyPage({
   } catch (error) {
     notFound();
   }
+}
+
+export default async function PropertyPage({
+  params,
+  searchParams,
+}: {
+  params: Promise<{ propertyId: string }>;
+  searchParams: Promise<{ edit?: string }>;
+}) {
+  return (
+    <Suspense fallback={<LoadingBar />}>
+      <PropertyDetailPageContent params={params} searchParams={searchParams} />
+    </Suspense>
+  );
 }

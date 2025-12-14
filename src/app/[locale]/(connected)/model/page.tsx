@@ -1,5 +1,6 @@
 "use server";
 
+import { Suspense } from "react";
 import { getModels } from "@/lib/dashboard-mgt-bff/api";
 import { defaultId } from "@/protoype";
 import { Link } from "@/i18n/navigation";
@@ -19,10 +20,15 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { getTranslations } from "next-intl/server";
+import LoadingBar from "@/components/ui/loading-bar";
+import { auth } from "@/lib/auth";
 
-export default async function ModelPage() {
-  const models = await getModels(defaultId);
-  const t = await getTranslations("ModelPage");
+async function ModelPageContent() {
+  const session = await auth();
+  const [models, t] = await Promise.all([
+    getModels(defaultId, session),
+    getTranslations("ModelPage"),
+  ]);
 
   if (!models || models.length === 0) {
     return (
@@ -82,5 +88,13 @@ export default async function ModelPage() {
         </CardContent>
       </Card>
     </div>
+  );
+}
+
+export default async function ModelPage() {
+  return (
+    <Suspense fallback={<LoadingBar />}>
+      <ModelPageContent />
+    </Suspense>
   );
 }

@@ -20,6 +20,7 @@ import { Label } from "../ui/label";
 import { toast } from "sonner";
 import { Loader2, CopyIcon } from "lucide-react";
 import { useTranslations } from "next-intl";
+import { useSession } from "next-auth/react";
 
 interface CreateModelFromPropertyButtonProps {
   property: Property;
@@ -29,6 +30,7 @@ export default function CreateModelFromPropertyButton({
   property,
 }: CreateModelFromPropertyButtonProps) {
   const router = useRouter();
+  const { data: session } = useSession();
   const t = useTranslations("PropertyCreateModelFromPropertyButton");
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -42,11 +44,14 @@ export default function CreateModelFromPropertyButton({
 
     try {
       setLoading(true);
-      await createModel({
-        agencyId: defaultId,
-        name: modelName.trim(),
-        rooms: property.rooms || [],
-      });
+      await createModel(
+        {
+          agencyId: defaultId,
+          name: modelName.trim(),
+          rooms: property.rooms || [],
+        },
+        session
+      );
       toast.success(t("modelCreatedSuccess"));
       setOpen(false);
       setModelName("");

@@ -26,9 +26,11 @@ import { Property } from "@/lib/dashboard-mgt-bff";
 import DeletePropertyButton from "./delete-button";
 import RoomsManager from "../shared/rooms-manager";
 import { useTranslations } from "next-intl";
+import { useSession } from "next-auth/react";
 
 export default function UpdatePropertyForm(props: { property?: Property }) {
   const router = useRouter();
+  const { data: session } = useSession();
   const t = useTranslations("PropertyUpdateForm");
   const [loading, setLoading] = useState(false);
   const [property, setProperty] = useState<Property>(
@@ -62,10 +64,13 @@ export default function UpdatePropertyForm(props: { property?: Property }) {
     try {
       setLoading(true);
       // Ensure propertyId is preserved and never updated
-      await updateProperty({
-        ...property,
-        propertyId: props.property?.propertyId || property.propertyId,
-      });
+      await updateProperty(
+        {
+          ...property,
+          propertyId: props.property?.propertyId || property.propertyId,
+        },
+        session
+      );
       toast.success(t("propertyUpdatedSuccess"));
       router.refresh(); // This will re-fetch the server-side data
     } catch (error) {

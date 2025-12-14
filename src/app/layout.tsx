@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { Toaster } from "@/components/ui/sonner";
-import { NavMenu } from "@/components/navigation/nav-menu";
 import { NextIntlClientProvider } from "next-intl";
+import Providers from "./providers";
 
 export const metadata: Metadata = {
   title: "V'imo Dashboard",
@@ -22,19 +22,14 @@ export default function RootLayout({
 }>) {
   return (
     <NextIntlClientProvider>
-      <html lang="en">
-        <body className="flex flex-col items-center min-h-screen">
-          <header className="w-full border-b">
-            <nav className="flex h-16 items-center !w-full">
-              <NavMenu />
-            </nav>
-          </header>
-          <main className="flex-1 w-full flex flex-col items-center m-2">
+      <Providers>
+        <html lang="en">
+          <body className="flex flex-col items-center min-h-screen">
             {children}
-          </main>
-          <Toaster position="bottom-right" />
-        </body>
-      </html>
+            <Toaster position="bottom-right" />
+          </body>
+        </html>
+      </Providers>
     </NextIntlClientProvider>
   );
 }

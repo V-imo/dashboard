@@ -13,7 +13,8 @@
     "allPropertiesDesc": "View and manage all properties",
     "createPropertyDesc": "Add a new property to the system",
     "modelDesc": "View and manage the models",
-    "propertiesDesc": "Manage your properties and related information."
+    "propertiesDesc": "Manage your properties and related information.",
+    "signOut": "Sign Out"
   },
   "AgencyDisplay": {
     "agencyInformation": "Agency Information",
@@ -320,5 +321,31 @@
     "pageNotFoundDesc": "The page you're looking for doesn't exist or has been moved.",
     "goHome": "Go Home",
     "goBack": "Go Back"
+  },
+  "LoginForm": {
+    "signIn": "Sign In",
+    "enterCredentials": "Enter your credentials to sign in",
+    "setNewPassword": "During your first login, for security reasons, you must update the temporary password from our system with your secure password. Please set a new password below.",
+    "email": "Email",
+    "username": "Email",
+    "password": "Password",
+    "newPassword": "New Password",
+    "confirmNewPassword": "Confirm New Password",
+    "signingIn": "Signing in...",
+    "changingPassword": "Changing password...",
+    "changePassword": "Change Password",
+    "loginSuccess": "Login successful",
+    "loginFailed": "Login failed",
+    "invalidCredentials": "Invalid email or password",
+    "newPasswordRequired": "For security reasons, you must replace the temporary password with a secure password during your first login. Please set your new password below.",
+    "passwordChangeFailed": "Failed to change password",
+    "passwordChangedSuccess": "Password changed successfully",
+    "passwordsDoNotMatch": "Passwords do not match",
+    "passwordTooShort": "Password must be at least 8 characters",
+    "passwordMustHaveUppercase": "Password must contain at least one uppercase letter",
+    "passwordMustHaveLowercase": "Password must contain at least one lowercase letter",
+    "passwordMustHaveNumber": "Password must contain at least one number",
+    "passwordMustHaveSpecialChar": "Password must contain at least one special character",
+    "passwordRequirements": "Password must contain at least 8 characters, one uppercase letter, one lowercase letter, one number, and one special character"
   }
 }

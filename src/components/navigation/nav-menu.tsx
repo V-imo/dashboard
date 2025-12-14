@@ -14,6 +14,9 @@ import { cn } from "@/lib/utils";
 import LocaleSwitcher from "./locale-switcher";
 import { ReactNode } from "react";
 import { useTranslations } from "next-intl";
+import { signOut, useSession } from "next-auth/react";
+import { Button } from "@/components/ui/button";
+import { LogOut } from "lucide-react";
 
 const ListItem = ({
   className,
@@ -32,6 +35,7 @@ const ListItem = ({
       <NavigationMenuLink asChild>
         <Link
           href={href}
+          prefetch={true}
           className={cn(
             "block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground",
             className
@@ -50,6 +54,7 @@ const ListItem = ({
 
 export function NavMenu({ children }: { children?: ReactNode }) {
   const t = useTranslations("NavMenu");
+  const { data: session } = useSession();
 
   const pages = [
     {
@@ -89,7 +94,7 @@ export function NavMenu({ children }: { children?: ReactNode }) {
 
   return (
     <div className="flex items-center w-full justify-between px-4">
-      <div className="flex-1 flex justify-center">
+      <div className="flex-1 flex">
         {children || (
           <NavigationMenu>
             <NavigationMenuList>
@@ -105,6 +110,7 @@ export function NavMenu({ children }: { children?: ReactNode }) {
                               <Link
                                 className="from-muted/50 to-muted flex h-full w-full flex-col justify-end rounded-md bg-gradient-to-b p-4 no-underline outline-none transition-all duration-200 select-none focus:shadow-md md:p-6"
                                 href={page.href}
+                                prefetch={true}
                               >
                                 <div className="mb-2 text-lg font-medium sm:mt-4">
                                   {page.name}
@@ -131,6 +137,7 @@ export function NavMenu({ children }: { children?: ReactNode }) {
                     <NavigationMenuLink asChild>
                       <Link
                         href={page.href}
+                        prefetch={true}
                         className={navigationMenuTriggerStyle()}
                       >
                         {page.name}
@@ -143,7 +150,18 @@ export function NavMenu({ children }: { children?: ReactNode }) {
           </NavigationMenu>
         )}
       </div>
-      <div className="flex-shrink-0">
+      <div className="flex-shrink-0 flex items-center gap-2">
+        {session && (
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => signOut({ callbackUrl: "/login" })}
+            className="flex items-center gap-2"
+          >
+            <LogOut className="h-4 w-4" />
+            {t("signOut")}
+          </Button>
+        )}
         <LocaleSwitcher />
       </div>
     </div>

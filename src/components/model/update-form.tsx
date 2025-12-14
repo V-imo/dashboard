@@ -7,19 +7,16 @@ import { Model } from "@/lib/dashboard-mgt-bff";
 import { defaultId } from "@/protoype";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
-import {
-  Card,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "../ui/card";
+import { Card, CardDescription, CardHeader, CardTitle } from "../ui/card";
 import { toast } from "sonner";
 import { Loader2, TrashIcon, PencilIcon } from "lucide-react";
 import RoomsManager from "../shared/rooms-manager";
 import { useTranslations } from "next-intl";
+import { useSession } from "next-auth/react";
 
 export default function UpdateModelForm(props: { model?: Model }) {
   const router = useRouter();
+  const { data: session } = useSession();
   const t = useTranslations("ModelUpdateForm");
   const [loading, setLoading] = useState(false);
   const [isEditingName, setIsEditingName] = useState(false);
@@ -46,11 +43,14 @@ export default function UpdateModelForm(props: { model?: Model }) {
     try {
       setLoading(true);
       // Ensure modelId and agencyId are preserved and never updated
-      await updateModel({
-        ...model,
-        modelId: props.model?.modelId || model.modelId,
-        agencyId: props.model?.agencyId || model.agencyId,
-      });
+      await updateModel(
+        {
+          ...model,
+          modelId: props.model?.modelId || model.modelId,
+          agencyId: props.model?.agencyId || model.agencyId,
+        },
+        session
+      );
       toast.success(t("modelUpdatedSuccess"));
       router.refresh(); // This will re-fetch the server-side data
     } catch (error) {
@@ -68,7 +68,7 @@ export default function UpdateModelForm(props: { model?: Model }) {
 
     try {
       setLoading(true);
-      await deleteModel(defaultId, model.modelId);
+      await deleteModel(defaultId, model.modelId, session);
       toast.success(t("modelDeletedSuccess"));
       router.push("/model");
     } catch (error) {

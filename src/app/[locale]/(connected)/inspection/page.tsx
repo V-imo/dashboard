@@ -1,5 +1,6 @@
 "use server";
 
+import { Suspense } from "react";
 import { getInspections, getProperties } from "@/lib/dashboard-mgt-bff/api";
 import { defaultId } from "@/protoype";
 import { Link } from "@/i18n/navigation";
@@ -20,13 +21,18 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { getTranslations, getLocale } from "next-intl/server";
+import LoadingBar from "@/components/ui/loading-bar";
+import { auth } from "@/lib/auth";
 
-export default async function InspectionPage() {
-  const inspections = await getInspections(defaultId);
-  const properties = await getProperties(defaultId);
-  const t = await getTranslations("InspectionPage");
-  const tPropertyPage = await getTranslations("PropertyPage");
-  const locale = await getLocale();
+async function InspectionPageContent() {
+  const session = await auth();
+  const [inspections, properties, t, tPropertyPage, locale] = await Promise.all([
+    getInspections(defaultId, session),
+    getProperties(defaultId, session),
+    getTranslations("InspectionPage"),
+    getTranslations("PropertyPage"),
+    getLocale(),
+  ]);
 
   if (!inspections || inspections.length === 0) {
     return (
@@ -110,5 +116,13 @@ export default async function InspectionPage() {
         </CardContent>
       </Card>
     </div>
+  );
+}
+
+export default async function InspectionPage() {
+  return (
+    <Suspense fallback={<LoadingBar />}>
+      <InspectionPageContent />
+    </Suspense>
   );
 }
