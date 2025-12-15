@@ -12,11 +12,12 @@ import {
 } from "@/components/ui/navigation-menu";
 import { cn } from "@/lib/utils";
 import LocaleSwitcher from "./locale-switcher";
-import { ReactNode } from "react";
+import { ReactNode, useEffect } from "react";
 import { useTranslations } from "next-intl";
 import { signOut, useSession } from "next-auth/react";
 import { Button } from "@/components/ui/button";
 import { LogOut } from "lucide-react";
+import { useRouter } from "@/i18n/navigation";
 
 const ListItem = ({
   className,
@@ -54,9 +55,14 @@ const ListItem = ({
 
 export function NavMenu({ children }: { children?: ReactNode }) {
   const t = useTranslations("NavMenu");
-  const { data: session } = useSession();
+  const { data: session, status } = useSession();
+  const router = useRouter();
 
-  console.log("session", session);
+  useEffect(() => {
+    if (status === "unauthenticated") {
+      router.push("/login");
+    }
+  }, [status, router]);
 
   const pages = [
     {
