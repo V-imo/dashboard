@@ -29,7 +29,6 @@ import {
 } from "lucide-react";
 import { Property, Model } from "@/lib/dashboard-mgt-bff";
 import { getModels } from "@/lib/dashboard-mgt-bff/api";
-import { defaultId } from "@/protoype";
 import { toast } from "sonner";
 import ElementManager from "./element-manager";
 import { cn } from "@/lib/utils";
@@ -64,7 +63,7 @@ export default function RoomsManager({ rooms, onChange }: RoomsManagerProps) {
   const loadModels = async () => {
     try {
       setLoadingModels(true);
-      const fetchedModels = await getModels(defaultId, session);
+      const fetchedModels = await getModels( session);
       setModels(fetchedModels || []);
     } catch (error) {
       toast.error(t("failedToLoadModels"));

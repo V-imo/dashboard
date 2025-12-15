@@ -25,7 +25,7 @@ import { useTranslations } from "next-intl";
 
 type PropertyRoom = Property["rooms"][number];
 type PropertyElement = PropertyRoom["elements"][number];
-type InspectionRoom = Inspection["rooms"][number];
+type InspectionRoom = NonNullable<Inspection["rooms"]>[number];
 type InspectionElement = InspectionRoom["elements"][number];
 
 interface InspectionRoomsManagerProps {

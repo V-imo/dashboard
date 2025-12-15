@@ -5,7 +5,6 @@ import UpdateAgencyForm from "@/components/agency/update-form";
 import AgencyDisplay from "@/components/agency/display";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { getAgency } from "@/lib/dashboard-mgt-bff/api";
-import { defaultId } from "@/protoype";
 import { Link } from "@/i18n/navigation";
 import { Button } from "@/components/ui/button";
 import { PencilIcon, XIcon } from "lucide-react";
@@ -21,7 +20,7 @@ async function AgencyPageContent({
 }) {
   const session = await auth();
   const [agency, t, { edit }] = await Promise.all([
-    getAgency(defaultId, session),
+    getAgency(session),
     getTranslations("AgencyPage"),
     searchParams,
   ]);

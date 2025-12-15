@@ -4,7 +4,7 @@
  */
 
 export interface paths {
-    "/inspection/{agencyId}": {
+    "/inspection": {
         parameters: {
             query?: never;
             header?: never;
@@ -15,9 +15,7 @@ export interface paths {
             parameters: {
                 query?: never;
                 header?: never;
-                path: {
-                    agencyId: string;
-                };
+                path?: never;
                 cookie?: never;
             };
             requestBody?: never;
@@ -34,14 +32,96 @@ export interface paths {
             };
         };
         put?: never;
-        post?: never;
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: {
+                content: {
+                    "application/json": {
+                        inspectionId?: string;
+                        propertyId: string;
+                        /** @enum {string} */
+                        status: "TO_DO" | "IN_PROGRESS" | "DONE" | "CANCELED";
+                        inspectorId?: string;
+                        date: string;
+                        rooms?: {
+                            name: string;
+                            description?: string;
+                            elements: {
+                                name: string;
+                                description?: string;
+                                images?: string[];
+                                /** @enum {string} */
+                                state: "GOOD" | "BAD" | "NEW" | "BROKEN";
+                            }[];
+                        }[];
+                    };
+                };
+            };
+            responses: {
+                /** @description Create an inspection */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": string;
+                    };
+                };
+            };
+        };
         delete?: never;
         options?: never;
         head?: never;
-        patch?: never;
+        patch: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: {
+                content: {
+                    "application/json": {
+                        inspectionId?: string;
+                        propertyId: string;
+                        /** @enum {string} */
+                        status: "TO_DO" | "IN_PROGRESS" | "DONE" | "CANCELED";
+                        inspectorId?: string;
+                        date: string;
+                        rooms?: {
+                            name: string;
+                            description?: string;
+                            elements: {
+                                name: string;
+                                description?: string;
+                                images?: string[];
+                                /** @enum {string} */
+                                state: "GOOD" | "BAD" | "NEW" | "BROKEN";
+                            }[];
+                        }[];
+                    };
+                };
+            };
+            responses: {
+                /** @description Update an inspection */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": string;
+                    };
+                };
+            };
+        };
         trace?: never;
     };
-    "/inspection/{agencyId}/{propertyId}": {
+    "/inspection/{propertyId}": {
         parameters: {
             query?: never;
             header?: never;
@@ -54,7 +134,6 @@ export interface paths {
                 query?: never;
                 header?: never;
                 path: {
-                    agencyId: string;
                     propertyId: string;
                 };
                 cookie?: never;
@@ -80,7 +159,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/inspection/{agencyId}/{propertyId}/{inspectionId}": {
+    "/inspection/{propertyId}/{inspectionId}": {
         parameters: {
             query?: never;
             header?: never;
@@ -92,7 +171,6 @@ export interface paths {
                 query?: never;
                 header?: never;
                 path: {
-                    agencyId: string;
                     propertyId: string;
                     inspectionId: string;
                 };
@@ -130,68 +208,6 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/inspection": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post: {
-            parameters: {
-                query?: never;
-                header?: never;
-                path?: never;
-                cookie?: never;
-            };
-            requestBody?: {
-                content: {
-                    "application/json": components["schemas"]["Inspection"];
-                };
-            };
-            responses: {
-                /** @description Create an inspection */
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": string;
-                    };
-                };
-            };
-        };
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch: {
-            parameters: {
-                query?: never;
-                header?: never;
-                path?: never;
-                cookie?: never;
-            };
-            requestBody?: {
-                content: {
-                    "application/json": components["schemas"]["Inspection"];
-                };
-            };
-            responses: {
-                /** @description Update an inspection */
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": string;
-                    };
-                };
-            };
-        };
-        trace?: never;
-    };
     "/inspection/{inspectionId}": {
         parameters: {
             query?: never;
@@ -205,7 +221,6 @@ export interface paths {
         delete: {
             parameters: {
                 query: {
-                    agencyId: string;
                     propertyId: string;
                 };
                 header?: never;
@@ -232,7 +247,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/agency/{agencyId}": {
+    "/agency": {
         parameters: {
             query?: never;
             header?: never;
@@ -244,9 +259,7 @@ export interface paths {
             parameters: {
                 query?: never;
                 header?: never;
-                path: {
-                    agencyId: string;
-                };
+                path?: never;
                 cookie?: never;
             };
             requestBody?: never;
@@ -275,43 +288,10 @@ export interface paths {
         };
         put?: never;
         post?: never;
-        delete: {
-            parameters: {
-                query?: never;
-                header?: never;
-                path: {
-                    agencyId: string;
-                };
-                cookie?: never;
-            };
-            requestBody?: never;
-            responses: {
-                /** @description Delete an agency */
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": string;
-                    };
-                };
-            };
-        };
+        delete?: never;
         options?: never;
         head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/agency": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post: {
+        patch: {
             parameters: {
                 query?: never;
                 header?: never;
@@ -335,33 +315,6 @@ export interface paths {
                 };
             };
             responses: {
-                /** @description Agency created */
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": string;
-                    };
-                };
-            };
-        };
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch: {
-            parameters: {
-                query?: never;
-                header?: never;
-                path?: never;
-                cookie?: never;
-            };
-            requestBody?: {
-                content: {
-                    "application/json": components["schemas"]["Agency"];
-                };
-            };
-            responses: {
                 /** @description Update an agency */
                 200: {
                     headers: {
@@ -375,7 +328,43 @@ export interface paths {
         };
         trace?: never;
     };
-    "/property/{agencyId}": {
+    "/agency/all": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Get an agency */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Get all agencies of user */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["Agency"][];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/property": {
         parameters: {
             query?: never;
             header?: never;
@@ -386,9 +375,7 @@ export interface paths {
             parameters: {
                 query?: never;
                 header?: never;
-                path: {
-                    agencyId: string;
-                };
+                path?: never;
                 cookie?: never;
             };
             requestBody?: never;
@@ -405,93 +392,6 @@ export interface paths {
             };
         };
         put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/property/{agencyId}/{propertyId}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: {
-            parameters: {
-                query?: never;
-                header?: never;
-                path: {
-                    agencyId: string;
-                    propertyId: string;
-                };
-                cookie?: never;
-            };
-            requestBody?: never;
-            responses: {
-                /** @description Get a property */
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["Property"];
-                    };
-                };
-                /** @description Property not found */
-                404: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": {
-                            message: string;
-                        };
-                    };
-                };
-            };
-        };
-        put?: never;
-        post?: never;
-        delete: {
-            parameters: {
-                query?: never;
-                header?: never;
-                path: {
-                    agencyId: string;
-                    propertyId: string;
-                };
-                cookie?: never;
-            };
-            requestBody?: never;
-            responses: {
-                /** @description Delete a property */
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": string;
-                    };
-                };
-            };
-        };
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/property": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
         post: {
             parameters: {
                 query?: never;
@@ -502,7 +402,6 @@ export interface paths {
             requestBody?: {
                 content: {
                     "application/json": {
-                        agencyId: string;
                         address: {
                             number: string;
                             street: string;
@@ -554,7 +453,33 @@ export interface paths {
             };
             requestBody?: {
                 content: {
-                    "application/json": components["schemas"]["Property"];
+                    "application/json": {
+                        propertyId: string;
+                        address: {
+                            number: string;
+                            street: string;
+                            city: string;
+                            zipCode: string;
+                            country: string;
+                        };
+                        owner?: {
+                            firstName: string;
+                            lastName: string;
+                            mail?: string;
+                            phoneNumber?: string;
+                        };
+                        rooms: {
+                            name: string;
+                            area?: number;
+                            description?: string;
+                            elements: {
+                                name: string;
+                                description?: string;
+                                images?: string[];
+                                type: string;
+                            }[];
+                        }[];
+                    };
                 };
             };
             responses: {
@@ -571,74 +496,34 @@ export interface paths {
         };
         trace?: never;
     };
-    "/model/{agencyId}": {
+    "/property/{propertyId}": {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        /** @description Get all models of an agency */
         get: {
             parameters: {
                 query?: never;
                 header?: never;
                 path: {
-                    agencyId: string;
+                    propertyId: string;
                 };
                 cookie?: never;
             };
             requestBody?: never;
             responses: {
-                /** @description Get all models of an agency */
+                /** @description Get a property */
                 200: {
                     headers: {
                         [name: string]: unknown;
                     };
                     content: {
-                        "application/json": components["schemas"]["Models"];
+                        "application/json": components["schemas"]["Property"];
                     };
                 };
-            };
-        };
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/model/{agencyId}/{modelId}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** @description Get a model */
-        get: {
-            parameters: {
-                query?: never;
-                header?: never;
-                path: {
-                    agencyId: string;
-                    modelId: string;
-                };
-                cookie?: never;
-            };
-            requestBody?: never;
-            responses: {
-                /** @description Get a model */
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["Model"];
-                    };
-                };
-                /** @description Model not found */
+                /** @description Property not found */
                 404: {
                     headers: {
                         [name: string]: unknown;
@@ -653,20 +538,18 @@ export interface paths {
         };
         put?: never;
         post?: never;
-        /** @description Delete a model */
         delete: {
             parameters: {
                 query?: never;
                 header?: never;
                 path: {
-                    agencyId: string;
-                    modelId: string;
+                    propertyId: string;
                 };
                 cookie?: never;
             };
             requestBody?: never;
             responses: {
-                /** @description Delete a model */
+                /** @description Delete a property */
                 200: {
                     headers: {
                         [name: string]: unknown;
@@ -689,7 +572,27 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get?: never;
+        /** @description Get all models of an agency */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Get all models of an agency */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["Models"];
+                    };
+                };
+            };
+        };
         put?: never;
         post: {
             parameters: {
@@ -701,7 +604,6 @@ export interface paths {
             requestBody?: {
                 content: {
                     "application/json": {
-                        agencyId: string;
                         name: string;
                         rooms: {
                             name: string;
@@ -741,7 +643,21 @@ export interface paths {
             };
             requestBody?: {
                 content: {
-                    "application/json": components["schemas"]["Model"];
+                    "application/json": {
+                        modelId: string;
+                        name: string;
+                        rooms: {
+                            name: string;
+                            area?: number;
+                            description?: string;
+                            elements: {
+                                name: string;
+                                description?: string;
+                                images?: string[];
+                                type: string;
+                            }[];
+                        }[];
+                    };
                 };
             };
             responses: {
@@ -758,19 +674,90 @@ export interface paths {
         };
         trace?: never;
     };
+    "/model/{modelId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Get a model */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    modelId: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Get a model */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["Model"];
+                    };
+                };
+                /** @description Model not found */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            message: string;
+                        };
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        /** @description Delete a model */
+        delete: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    modelId: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Delete a model */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": string;
+                    };
+                };
+            };
+        };
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
         Inspection: {
+            agencyId: string;
             inspectionId?: string;
             propertyId: string;
             /** @enum {string} */
             status: "TO_DO" | "IN_PROGRESS" | "DONE" | "CANCELED";
             inspectorId?: string;
             date: string;
-            agencyId: string;
-            rooms: {
+            rooms?: {
                 name: string;
                 description?: string;
                 elements: {

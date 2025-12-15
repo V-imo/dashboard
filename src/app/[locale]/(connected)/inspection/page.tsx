@@ -2,7 +2,6 @@
 
 import { Suspense } from "react";
 import { getInspections, getProperties } from "@/lib/dashboard-mgt-bff/api";
-import { defaultId } from "@/protoype";
 import { Link } from "@/i18n/navigation";
 import InspectionStatusBadge from "@/components/inspection/status-badge";
 import {
@@ -26,13 +25,15 @@ import { auth } from "@/lib/auth";
 
 async function InspectionPageContent() {
   const session = await auth();
-  const [inspections, properties, t, tPropertyPage, locale] = await Promise.all([
-    getInspections(defaultId, session),
-    getProperties(defaultId, session),
-    getTranslations("InspectionPage"),
-    getTranslations("PropertyPage"),
-    getLocale(),
-  ]);
+  const [inspections, properties, t, tPropertyPage, locale] = await Promise.all(
+    [
+      getInspections(session),
+      getProperties(session),
+      getTranslations("InspectionPage"),
+      getTranslations("PropertyPage"),
+      getLocale(),
+    ]
+  );
 
   if (!inspections || inspections.length === 0) {
     return (

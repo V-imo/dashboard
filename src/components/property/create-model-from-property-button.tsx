@@ -4,7 +4,6 @@ import { useState } from "react";
 import { useRouter } from "@/i18n/navigation";
 import { createModel } from "@/lib/dashboard-mgt-bff/api";
 import { Property } from "@/lib/dashboard-mgt-bff";
-import { defaultId } from "@/protoype";
 import { Button } from "../ui/button";
 import {
   Dialog,
@@ -46,7 +45,6 @@ export default function CreateModelFromPropertyButton({
       setLoading(true);
       await createModel(
         {
-          agencyId: defaultId,
           name: modelName.trim(),
           rooms: property.rooms || [],
         },

@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { Button } from "../ui/button";
-import { defaultId } from "@/protoype";
 import { deleteProperty } from "@/lib/dashboard-mgt-bff/api";
 import { toast } from "sonner";
 import { useRouter } from "@/i18n/navigation";
@@ -18,7 +17,7 @@ export default function DeletePropertyButton(props: { propertyId: string }) {
   const del = async () => {
     try {
       setLoading(true);
-      await deleteProperty(defaultId, props.propertyId, session);
+      await deleteProperty(props.propertyId, session);
       toast.success(t("propertyDeletedSuccess"));
       router.push("/property");
     } catch (error) {

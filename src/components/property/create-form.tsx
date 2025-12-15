@@ -22,7 +22,6 @@ import {
 } from "../ui/select";
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
-import { defaultId } from "@/protoype";
 import { Property } from "@/lib/dashboard-mgt-bff";
 import RoomsManager from "../shared/rooms-manager";
 import { useTranslations } from "next-intl";
@@ -33,8 +32,9 @@ export default function CreatePropertyForm() {
   const { data: session } = useSession();
   const t = useTranslations("PropertyCreateForm");
   const [loading, setLoading] = useState(false);
-  const [property, setProperty] = useState<Omit<Property, "propertyId">>({
-    agencyId: defaultId,
+  const [property, setProperty] = useState<
+    Omit<Property, "propertyId" | "agencyId">
+  >({
     address: {
       number: "",
       street: "",

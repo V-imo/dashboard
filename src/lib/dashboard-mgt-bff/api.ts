@@ -3,28 +3,23 @@ import { Session } from "next-auth";
 import { getClientHeaders } from "../utils";
 
 export const getInspections = async (
-  agencyId: string,
   session: Session | null
 ) => {
   const headers = getClientHeaders(session);
-  const response = await client.GET("/inspection/{agencyId}", {
-    params: {
-      path: { agencyId },
-    },
+  const response = await client.GET("/inspection", {
     headers,
   });
   return response.data;
 };
 
 export const getPropertyInspections = async (
-  agencyId: string,
   propertyId: string,
   session: Session | null
 ) => {
   const headers = getClientHeaders(session);
-  const response = await client.GET("/inspection/{agencyId}/{propertyId}", {
+  const response = await client.GET("/inspection/{propertyId}", {
     params: {
-      path: { agencyId, propertyId },
+      path: {propertyId },
     },
     headers,
   });
@@ -32,7 +27,7 @@ export const getPropertyInspections = async (
 };
 
 export const createInspection = async (
-  inspection: Inspection,
+  inspection: Omit<Inspection, "agencyId">,
   session: Session | null
 ) => {
   const headers = getClientHeaders(session);
@@ -47,7 +42,6 @@ export const createInspection = async (
 };
 
 export const deleteInspection = async (
-  agencyId: string,
   propertyId: string,
   inspectionId: string,
   session: Session | null
@@ -55,7 +49,7 @@ export const deleteInspection = async (
   const headers = getClientHeaders(session);
   const response = await client.DELETE("/inspection/{inspectionId}", {
     params: {
-      query: { agencyId, propertyId },
+      query: { propertyId },
       path: { inspectionId },
     },
     headers,
@@ -64,17 +58,16 @@ export const deleteInspection = async (
 };
 
 export const getInspection = async (
-  agencyId: string,
   propertyId: string,
   inspectionId: string,
   session: Session | null
 ) => {
   const headers = getClientHeaders(session);
   const response = await client.GET(
-    "/inspection/{agencyId}/{propertyId}/{inspectionId}",
+    "/inspection/{propertyId}/{inspectionId}",
     {
       params: {
-        path: { agencyId, propertyId, inspectionId },
+        path: { propertyId, inspectionId },
       },
       headers,
     }
@@ -94,18 +87,15 @@ export const updateInspection = async (
   return response.data;
 };
 
-export const getAgency = async (agencyId: string, session: Session | null) => {
+export const getAgency = async ( session: Session | null) => {
   const headers = getClientHeaders(session);
-  const response = await client.GET("/agency/{agencyId}", {
-    params: {
-      path: { agencyId },
-    },
+  const response = await client.GET("/agency", {
     headers,
   });
   return response.data;
 };
 
-export const updateAgency = async (agency: Agency, session: Session | null) => {
+export const updateAgency = async (agency: Omit<Agency, "agencyId">, session: Session | null) => {
   const headers = getClientHeaders(session);
   const response = await client.PATCH("/agency", {
     body: agency,
@@ -114,29 +104,11 @@ export const updateAgency = async (agency: Agency, session: Session | null) => {
   return response.data;
 };
 
-export const deleteAgency = async (
-  agencyId: string,
-  session: Session | null
-) => {
-  const headers = getClientHeaders(session);
-  const response = await client.DELETE("/agency/{agencyId}", {
-    params: {
-      path: { agencyId },
-    },
-    headers,
-  });
-  return response.data;
-};
-
 export const getProperties = async (
-  agencyId: string,
   session: Session | null
 ) => {
   const headers = getClientHeaders(session);
-  const response = await client.GET("/property/{agencyId}", {
-    params: {
-      path: { agencyId },
-    },
+  const response = await client.GET("/property", {
     headers,
   });
   return response.data;
@@ -170,14 +142,13 @@ export const updateProperty = async (
 };
 
 export const deleteProperty = async (
-  agencyId: string,
   propertyId: string,
   session: Session | null
 ) => {
   const headers = getClientHeaders(session);
-  const response = await client.DELETE("/property/{agencyId}/{propertyId}", {
+  const response = await client.DELETE("/property/{propertyId}", {
     params: {
-      path: { agencyId, propertyId },
+      path: { propertyId },
     },
     headers,
   });
@@ -185,40 +156,35 @@ export const deleteProperty = async (
 };
 
 export const getProperty = async (
-  agencyId: string,
   propertyId: string,
   session: Session | null
 ) => {
   const headers = getClientHeaders(session);
-  const response = await client.GET("/property/{agencyId}/{propertyId}", {
+  const response = await client.GET("/property/{propertyId}", {
     params: {
-      path: { agencyId, propertyId },
+      path: { propertyId },
     },
     headers,
   });
   return response.data;
 };
 
-export const getModels = async (agencyId: string, session: Session | null) => {
+export const getModels = async (session: Session | null) => {
   const headers = getClientHeaders(session);
-  const response = await client.GET("/model/{agencyId}", {
-    params: {
-      path: { agencyId },
-    },
+  const response = await client.GET("/model", {
     headers,
   });
   return response.data;
 };
 
 export const getModel = async (
-  agencyId: string,
   modelId: string,
   session: Session | null
 ) => {
   const headers = getClientHeaders(session);
-  const response = await client.GET("/model/{agencyId}/{modelId}", {
+  const response = await client.GET("/model/{modelId}", {
     params: {
-      path: { agencyId, modelId },
+      path: { modelId },
     },
     headers,
   });
@@ -226,7 +192,7 @@ export const getModel = async (
 };
 
 export const createModel = async (
-  model: Omit<Model, "modelId">,
+  model: Omit<Model, "modelId" | "agencyId">,
   session: Session | null
 ) => {
   const headers = getClientHeaders(session);
@@ -240,7 +206,7 @@ export const createModel = async (
   return response.data;
 };
 
-export const updateModel = async (model: Model, session: Session | null) => {
+export const updateModel = async (model: Omit<Model, "agencyId">, session: Session | null) => {
   const headers = getClientHeaders(session);
   const response = await client.PATCH("/model", {
     body: model,
@@ -250,14 +216,13 @@ export const updateModel = async (model: Model, session: Session | null) => {
 };
 
 export const deleteModel = async (
-  agencyId: string,
   modelId: string,
   session: Session | null
 ) => {
   const headers = getClientHeaders(session);
-  const response = await client.DELETE("/model/{agencyId}/{modelId}", {
+  const response = await client.DELETE("/model/{modelId}", {
     params: {
-      path: { agencyId, modelId },
+      path: { modelId },
     },
     headers,
   });

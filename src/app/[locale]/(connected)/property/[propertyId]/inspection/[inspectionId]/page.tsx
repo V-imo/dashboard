@@ -4,7 +4,6 @@ import { Suspense } from "react";
 import UpdateInspectionForm from "@/components/inspection/update-form";
 import InspectionDisplay from "@/components/inspection/display";
 import { getInspection, getProperty } from "@/lib/dashboard-mgt-bff/api";
-import { defaultId } from "@/protoype";
 import { HouseIcon, PencilIcon, XIcon } from "lucide-react";
 import { Link } from "@/i18n/navigation";
 import { notFound } from "next/navigation";
@@ -25,12 +24,11 @@ async function InspectionDetailPageContent({
     );
     const isEditMode = edit === "true";
     const inspection = await getInspection(
-      defaultId,
       propertyId,
       inspectionId,
-      session
+      session,
     );
-    const property = await getProperty(defaultId, propertyId, session);
+    const property = await getProperty(propertyId, session);
 
     if (!inspection || !property) {
       notFound();

@@ -22,7 +22,6 @@ import {
 } from "../ui/select";
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
-import { defaultId } from "@/protoype";
 import { Inspection, Property } from "@/lib/dashboard-mgt-bff";
 import { useTranslations } from "next-intl";
 import { useSession } from "next-auth/react";
@@ -36,10 +35,9 @@ export default function CreateInspectionForm(props: {
   const t = useTranslations("InspectionCreateForm");
   const [loading, setLoading] = useState(false);
   const [inspection, setInspection] = useState<
-    Omit<Inspection, "inspectionId">
+    Omit<Inspection, "inspectionId" | "agencyId">
   >({
     propertyId: props.propertyId,
-    agencyId: defaultId,
     status: "TO_DO",
     date: "",
     inspectorId: "",

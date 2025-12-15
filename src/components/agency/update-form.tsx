@@ -4,7 +4,6 @@ import { useState, useEffect } from "react";
 import { useRouter } from "@/i18n/navigation";
 import { Agency } from "@/lib/dashboard-mgt-bff";
 import { updateAgency } from "@/lib/dashboard-mgt-bff/api";
-import { defaultId } from "@/protoype";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import { Label } from "../ui/label";
@@ -25,9 +24,8 @@ export default function UpdateAgencyForm(props: { agency?: Agency }) {
   const { data: session } = useSession();
   const t = useTranslations("AgencyUpdateForm");
   const [loading, setLoading] = useState(false);
-  const [agency, setAgency] = useState<Agency>(
+  const [agency, setAgency] = useState<Omit<Agency, "agencyId">>(
     props.agency || {
-      agencyId: defaultId,
       name: "",
       contactMail: "",
       contactPhone: "",

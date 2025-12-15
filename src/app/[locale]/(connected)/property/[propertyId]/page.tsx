@@ -7,7 +7,6 @@ import {
   getProperty,
   getPropertyInspections,
 } from "@/lib/dashboard-mgt-bff/api";
-import { defaultId } from "@/protoype";
 import { notFound } from "next/navigation";
 import { Link } from "@/i18n/navigation";
 import { Button } from "@/components/ui/button";
@@ -31,11 +30,11 @@ async function PropertyDetailPageContent({
   const isEditMode = edit === "true";
 
   try {
-    const property = await getProperty(defaultId, propertyId, session);
+    const property = await getProperty(propertyId, session);
     if (!property) {
       notFound();
     }
-    const inspections = await getPropertyInspections(defaultId, propertyId, session);
+    const inspections = await getPropertyInspections(propertyId, session);
     return (
       <div className="flex flex-col items-center justify-center w-full gap-6">
         <div className="flex justify-end gap-2 w-full max-w-4xl">
