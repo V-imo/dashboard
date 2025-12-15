@@ -56,6 +56,8 @@ export function NavMenu({ children }: { children?: ReactNode }) {
   const t = useTranslations("NavMenu");
   const { data: session } = useSession();
 
+  console.log("session", session);
+
   const pages = [
     {
       name: t("home"),
