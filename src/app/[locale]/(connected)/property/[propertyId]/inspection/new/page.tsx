@@ -3,7 +3,6 @@
 import { Suspense } from "react";
 import CreateInspectionForm from "@/components/inspection/create-form";
 import { getProperty } from "@/lib/dashboard-mgt-bff/api";
-import { defaultId } from "@/protoype";
 import { ArrowLeftIcon } from "lucide-react";
 import { Link } from "@/i18n/navigation";
 import { notFound } from "next/navigation";
@@ -16,11 +15,8 @@ async function NewInspectionPageContent({
   params: Promise<{ propertyId: string }>;
 }) {
   try {
-    const [session, { propertyId }] = await Promise.all([
-      auth(),
-      params,
-    ]);
-    const property = await getProperty(defaultId, propertyId, session);
+    const [session, { propertyId }] = await Promise.all([auth(), params]);
+    const property = await getProperty(propertyId, session);
 
     if (!property) {
       notFound();

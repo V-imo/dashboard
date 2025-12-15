@@ -2,7 +2,6 @@
 
 import { Suspense } from "react";
 import { getModels } from "@/lib/dashboard-mgt-bff/api";
-import { defaultId } from "@/protoype";
 import { Link } from "@/i18n/navigation";
 import {
   Table,
@@ -26,7 +25,7 @@ import { auth } from "@/lib/auth";
 async function ModelPageContent() {
   const session = await auth();
   const [models, t] = await Promise.all([
-    getModels(defaultId, session),
+    getModels(session),
     getTranslations("ModelPage"),
   ]);
 

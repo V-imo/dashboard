@@ -2,7 +2,6 @@
 
 import { Suspense } from "react";
 import { getProperties } from "@/lib/dashboard-mgt-bff/api";
-import { defaultId } from "@/protoype";
 import { Link } from "@/i18n/navigation";
 import {
   Table,
@@ -26,7 +25,7 @@ import { auth } from "@/lib/auth";
 async function PropertyPageContent() {
   const session = await auth();
   const [properties, t] = await Promise.all([
-    getProperties(defaultId, session),
+    getProperties(session),
     getTranslations("PropertyPage"),
   ]);
 

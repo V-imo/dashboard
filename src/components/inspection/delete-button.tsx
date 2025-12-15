@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { Button } from "../ui/button";
-import { defaultId } from "@/protoype";
 import { deleteInspection } from "@/lib/dashboard-mgt-bff/api";
 import { toast } from "sonner";
 import { useRouter } from "@/i18n/navigation";
@@ -21,12 +20,7 @@ export default function DeleteInspectionButton(props: {
   const del = async () => {
     try {
       setLoading(true);
-      await deleteInspection(
-        defaultId,
-        props.propertyId,
-        props.inspectionId,
-        session
-      );
+      await deleteInspection(props.propertyId, props.inspectionId, session);
       toast.success(t("inspectionDeletedSuccess"));
       router.push(`/property/${props.propertyId}`);
     } catch (error) {

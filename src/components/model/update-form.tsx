@@ -4,7 +4,6 @@ import { useState, useEffect, useRef } from "react";
 import { useRouter } from "@/i18n/navigation";
 import { updateModel, deleteModel } from "@/lib/dashboard-mgt-bff/api";
 import { Model } from "@/lib/dashboard-mgt-bff";
-import { defaultId } from "@/protoype";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import { Card, CardDescription, CardHeader, CardTitle } from "../ui/card";
@@ -20,10 +19,9 @@ export default function UpdateModelForm(props: { model?: Model }) {
   const t = useTranslations("ModelUpdateForm");
   const [loading, setLoading] = useState(false);
   const [isEditingName, setIsEditingName] = useState(false);
-  const [model, setModel] = useState<Model>(
+  const [model, setModel] = useState<Omit<Model, "agencyId">>(
     props.model || {
       modelId: "",
-      agencyId: defaultId,
       name: "",
       rooms: [],
     }
@@ -47,7 +45,6 @@ export default function UpdateModelForm(props: { model?: Model }) {
         {
           ...model,
           modelId: props.model?.modelId || model.modelId,
-          agencyId: props.model?.agencyId || model.agencyId,
         },
         session
       );
@@ -68,7 +65,7 @@ export default function UpdateModelForm(props: { model?: Model }) {
 
     try {
       setLoading(true);
-      await deleteModel(defaultId, model.modelId, session);
+      await deleteModel(model.modelId, session);
       toast.success(t("modelDeletedSuccess"));
       router.push("/model");
     } catch (error) {

@@ -20,7 +20,7 @@ import { useTranslations } from "next-intl";
 
 type PropertyRoom = Property["rooms"][number];
 type PropertyElement = PropertyRoom["elements"][number];
-type InspectionElement = Inspection["rooms"][number]["elements"][number];
+type InspectionElement = NonNullable<Inspection["rooms"]>[number]["elements"][number];
 
 interface InspectionElementEditorProps {
   element: InspectionElement;
