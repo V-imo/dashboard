@@ -1,6 +1,7 @@
 import NextAuth, { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { getCognito } from "@/lib/cognito";
+import { decodeCognitoToken } from "@/lib/utils";
 
 interface UserWithTokens {
   id: string;
@@ -16,6 +17,8 @@ interface JWTToken {
   idToken?: string;
   refreshToken?: string;
   sub?: string;
+  groups?: string[];
+  currentAgency?: string;
   [key: string]: unknown;
 }
 
@@ -28,6 +31,8 @@ interface SessionWithTokens {
     name?: string | null;
     email?: string | null;
     image?: string | null;
+    currentAgency?: string;
+    agencies?: string[];
   };
 }
 
@@ -142,6 +147,15 @@ export const authOptions: NextAuthOptions = {
         jwtToken.idToken = userWithTokens.idToken;
         jwtToken.refreshToken = userWithTokens.refreshToken;
         jwtToken.sub = userWithTokens.id;
+
+        // Extract Cognito groups and currentAgency from idToken
+        if (userWithTokens.idToken) {
+          const { groups, currentAgency } = decodeCognitoToken(
+            userWithTokens.idToken
+          );
+          jwtToken.groups = groups;
+          jwtToken.currentAgency = currentAgency;
+        }
       }
       return token;
     },
@@ -152,6 +166,8 @@ export const authOptions: NextAuthOptions = {
         sessionWithTokens.accessToken = jwtToken.accessToken;
         sessionWithTokens.idToken = jwtToken.idToken;
         sessionWithTokens.refreshToken = jwtToken.refreshToken;
+        sessionWithTokens.user.currentAgency = jwtToken.currentAgency;
+        sessionWithTokens.user.agencies = jwtToken.groups || [];
         if (jwtToken.sub) {
           sessionWithTokens.user.id = jwtToken.sub;
         }

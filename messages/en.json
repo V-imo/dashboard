@@ -14,7 +14,8 @@
     "createPropertyDesc": "Add a new property to the system",
     "modelDesc": "View and manage the models",
     "propertiesDesc": "Manage your properties and related information.",
-    "signOut": "Sign Out"
+    "signOut": "Sign Out",
+    "employees": "Employees"
   },
   "AgencyDisplay": {
     "agencyInformation": "Agency Information",
@@ -347,5 +348,26 @@
     "passwordMustHaveNumber": "Password must contain at least one number",
     "passwordMustHaveSpecialChar": "Password must contain at least one special character",
     "passwordRequirements": "Password must contain at least 8 characters, one uppercase letter, one lowercase letter, one number, and one special character"
+  },
+  "Employee": {
+    "employees": "Employees",
+    "name": "Name",
+    "email": "Email"
+  },
+  "EmployeeDeleteButton": {
+    "deleteEmployee": "Delete",
+    "deleting": "Deleting...",
+    "areYouSureDelete": "Are you sure you want to delete this employee?",
+    "employeeDeletedSuccess": "Employee deleted successfully",
+    "failedToDeleteEmployee": "Failed to delete employee"
+  },
+  "EmployeeAddButton": {
+    "addEmployee": "Add Employee",
+    "adding": "Adding...",
+    "employeeAddedSuccess": "Employee added successfully",
+    "failedToAddEmployee": "Failed to add employee",
+    "firstName": "First Name",
+    "lastName": "Last Name",
+    "email": "Email"
   }
 }

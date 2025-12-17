@@ -85,11 +85,15 @@ export function NavMenu({ children }: { children?: ReactNode }) {
           description: t("modelDesc"),
         },
       ],
-    },
-    {
-      name: t("inspections"),
-      href: "/inspection",
-    },
+      },
+      {
+        name: t("inspections"),
+        href: "/inspection",
+      },
+      {
+        name: t("employees"),
+        href: "/employee",
+      },
   ];
 
   return (

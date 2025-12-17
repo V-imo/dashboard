@@ -1,9 +1,9 @@
 "use client";
 
-import { useParams } from "next/navigation";
 import { Locale } from "next-intl";
 import { useTransition } from "react";
-import { usePathname, useRouter } from "@/i18n/navigation";
+import { usePathname, getPathname } from "@/i18n/navigation";
+import { useLocale } from "next-intl";
 import { routing } from "@/i18n/routing";
 import {
   Select,
@@ -26,22 +26,17 @@ const localeFlags: Record<Locale, string> = {
 
 export default function LocaleSwitcher() {
   const t = useTranslations("LocaleSwitcher");
-  const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const pathname = usePathname();
-  const params = useParams();
-  const currentLocale = (params?.locale as Locale) || routing.defaultLocale;
+  const currentLocale = useLocale();
 
   function onValueChange(nextLocale: Locale) {
-    startTransition(() => {
-      router.replace(
-        // @ts-expect-error -- TypeScript will validate that only known `params`
-        // are used in combination with a given `pathname`. Since the two will
-        // always match for the current route, we can skip runtime checks.
-        { pathname, params },
-        { locale: nextLocale }
-      );
-    });
+    if (nextLocale !== currentLocale) {
+      startTransition(() => {
+        const newPathname = getPathname({ locale: nextLocale, href: pathname });
+        window.location.href = newPathname;
+      });
+    }
   }
 
   return (
