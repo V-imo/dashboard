@@ -14,7 +14,8 @@
     "createPropertyDesc": "Ajouter une nouvelle propriété au système",
     "modelDesc": "Voir et gérer les modèles",
     "propertiesDesc": "Gérez vos propriétés et les informations associées.",
-    "signOut": "Déconnexion"
+    "signOut": "Déconnexion",
+    "employees": "Employés"
   },
   "AgencyDisplay": {
     "agencyInformation": "Informations sur l'agence",
@@ -347,5 +348,26 @@
     "passwordMustHaveNumber": "Le mot de passe doit contenir au moins un chiffre",
     "passwordMustHaveSpecialChar": "Le mot de passe doit contenir au moins un caractère spécial",
     "passwordRequirements": "Le mot de passe doit contenir au moins 8 caractères, une majuscule, une minuscule, un chiffre et un caractère spécial"
+  },
+  "Employee": {
+    "employees": "Employés",
+    "name": "Nom",
+    "email": "Email"
+  },
+  "EmployeeDeleteButton": {
+    "deleteEmployee": "Supprimer",
+    "deleting": "Suppression...",
+    "areYouSureDelete": "Êtes-vous sûr de vouloir supprimer cet employé ?",
+    "employeeDeletedSuccess": "Employé supprimé avec succès",
+    "failedToDeleteEmployee": "Échec de la suppression de l'employé"
+  },
+  "EmployeeAddButton": {
+    "addEmployee": "Ajouter un employé",
+    "adding": "Ajout...",
+    "firstName": "Prénom",
+    "lastName": "Nom",
+    "email": "Email",
+    "employeeAddedSuccess": "Employé ajouté avec succès",
+    "failedToAddEmployee": "Échec de l'ajout de l'employé"
   }
 }
