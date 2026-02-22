@@ -164,7 +164,10 @@
     "room": "Pièce",
     "rooms": "Pièces",
     "element": "Elément",
-    "notSet": "Non défini"
+    "notSet": "Non défini",
+    "exportPdf": "Exporter PDF",
+    "exportPdfLoading": "Chargement...",
+    "exportPdfError": "PDF non disponible, veuillez réessayer dans quelques instants"
   },
   "InspectionCreateForm": {
     "property": "Propriété",
