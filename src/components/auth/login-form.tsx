@@ -165,90 +165,94 @@ export default function LoginForm() {
   };
 
   return (
-    <Card className="w-full max-w-md">
-      <CardHeader>
-        <CardTitle>{t("signIn")}</CardTitle>
-        <CardDescription>
-          {challengeData ? t("setNewPassword") : t("enterCredentials")}
-        </CardDescription>
+    <Card className="w-full border-0 shadow-none bg-transparent">
+      <CardHeader className="space-y-4 px-0">
+        <div className="space-y-1">
+          <CardTitle className="text-3xl font-bold">{t("signIn")}</CardTitle>
+          <CardDescription className="text-base">
+            {challengeData ? t("setNewPassword") : t("enterCredentials")}
+          </CardDescription>
+        </div>
       </CardHeader>
-      <CardContent>
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <Label htmlFor="email">{t("email")}</Label>
-            <Input
-              id="email"
-              type="email"
-              value={challengeData?.username || email}
-              onChange={(e) => setEmail(e.target.value)}
-              disabled={!!challengeData || loading}
-              required
-              autoComplete="email"
-            />
-          </div>
-
-          {!challengeData && (
-            <div>
-              <Label htmlFor="password">{t("password")}</Label>
+      <CardContent className="px-0">
+        <form onSubmit={handleSubmit} className="space-y-6">
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="email" className="text-sm font-medium">{t("email")}</Label>
               <Input
-                id="password"
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                disabled={loading}
+                id="email"
+                type="email"
+                value={challengeData?.username || email}
+                onChange={(e) => setEmail(e.target.value)}
+                disabled={!!challengeData || loading}
                 required
-                autoComplete="current-password"
+                autoComplete="email"
+                placeholder="you@example.com"
+                className="bg-background/50 border-border/50 focus-visible:border-primary focus-visible:ring-primary/20"
               />
             </div>
-          )}
 
-          {challengeData && (
-            <>
-              <div>
-                <Label htmlFor="newPassword">{t("newPassword")}</Label>
+            {!challengeData && (
+              <div className="space-y-2">
+                <Label htmlFor="password" className="text-sm font-medium">{t("password")}</Label>
                 <Input
-                  id="newPassword"
+                  id="password"
                   type="password"
-                  value={newPassword}
-                  onChange={(e) => setNewPassword(e.target.value)}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
                   disabled={loading}
                   required
-                  autoComplete="new-password"
-                  minLength={8}
-                />
-                <p className="text-sm text-muted-foreground mt-1">
-                  {t("passwordRequirements")}
-                </p>
-              </div>
-              <div>
-                <Label htmlFor="confirmNewPassword">
-                  {t("confirmNewPassword")}
-                </Label>
-                <Input
-                  id="confirmNewPassword"
-                  type="password"
-                  value={confirmNewPassword}
-                  onChange={(e) => setConfirmNewPassword(e.target.value)}
-                  disabled={loading}
-                  required
-                  autoComplete="new-password"
-                  minLength={8}
+                  autoComplete="current-password"
+                  placeholder="••••••••"
+                  className="bg-background/50 border-border/50 focus-visible:border-primary focus-visible:ring-primary/20"
                 />
               </div>
-            </>
-          )}
-
-          <Button type="submit" className="w-full" disabled={loading}>
-            {loading ? (
-              <>
-                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                {challengeData ? t("changingPassword") : t("signingIn")}
-              </>
-            ) : challengeData ? (
-              t("changePassword")
-            ) : (
-              t("signIn")
             )}
+
+            {challengeData && (
+              <>
+                <div className="space-y-2">
+                  <Label htmlFor="newPassword" className="text-sm font-medium">{t("newPassword")}</Label>
+                  <Input
+                    id="newPassword"
+                    type="password"
+                    value={newPassword}
+                    onChange={(e) => setNewPassword(e.target.value)}
+                    disabled={loading}
+                    required
+                    autoComplete="new-password"
+                    minLength={8}
+                    placeholder="••••••••"
+                    className="bg-background/50 border-border/50 focus-visible:border-primary focus-visible:ring-primary/20"
+                  />
+                  <p className="text-xs text-muted-foreground mt-1">
+                    {t("passwordRequirements")}
+                  </p>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="confirmNewPassword" className="text-sm font-medium">
+                    {t("confirmNewPassword")}
+                  </Label>
+                  <Input
+                    id="confirmNewPassword"
+                    type="password"
+                    value={confirmNewPassword}
+                    onChange={(e) => setConfirmNewPassword(e.target.value)}
+                    disabled={loading}
+                    required
+                    autoComplete="new-password"
+                    minLength={8}
+                    placeholder="••••••••"
+                    className="bg-background/50 border-border/50 focus-visible:border-primary focus-visible:ring-primary/20"
+                  />
+                </div>
+              </>
+            )}
+          </div>
+
+          <Button type="submit" className="w-full" size="lg" disabled={loading}>
+            {loading && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
+            {loading ? (challengeData ? t("changingPassword") : t("signingIn")) : (challengeData ? t("changePassword") : t("signIn"))}
           </Button>
         </form>
       </CardContent>
