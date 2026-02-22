@@ -80,7 +80,6 @@ export default function UpdateModelForm(props: { model?: Model }) {
 
   return (
     <div className="flex flex-col gap-6 max-w-4xl w-full">
-      {/* Model Name Section */}
       <Card>
         <CardHeader>
           <div className="flex items-center justify-between gap-2">
@@ -123,13 +122,11 @@ export default function UpdateModelForm(props: { model?: Model }) {
         </CardHeader>
       </Card>
 
-      {/* Rooms Section */}
       <RoomsManager
         rooms={model.rooms || []}
         onChange={(rooms) => setModel({ ...model, rooms })}
       />
 
-      {/* Submit Button */}
       <div className="flex justify-end gap-2">
         <Button onClick={handleDelete} variant="destructive" size="lg">
           <TrashIcon className="w-4 h-4 mr-2" />

@@ -6,8 +6,9 @@ import { useTranslations } from "next-intl";
 import { addEmployeeAction } from "../actions";
 import { useActionState, useEffect, useState } from "react";
 import { toast } from "sonner";
-import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogTrigger, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
 export default function AddEmployeeDialog() {
   const t = useTranslations("EmployeeAddButton");
@@ -37,22 +38,35 @@ export default function AddEmployeeDialog() {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="default" size="sm">
-          <PlusIcon className="w-4 h-4" />
+        <Button>
+          <PlusIcon className="w-4 h-4 mr-2" />
           {t("addEmployee")}
         </Button>
       </DialogTrigger>
       <DialogContent>
-        <form action={formAction}>
-          <div className="flex flex-col gap-4">
-            <Input type="text" name="firstName" placeholder={t("firstName")} />
-            <Input type="text" name="lastName" placeholder={t("lastName")} />
-            <Input type="email" name="email" placeholder={t("email")} />
-            <Button variant="default" size="sm" type="submit" >
-              {isPending ? t("adding") : t("addEmployee")}
-              {isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : null}
-            </Button>
+        <DialogHeader>
+          <DialogTitle>{t("addEmployee")}</DialogTitle>
+          <DialogDescription>
+            {t("addEmployeeDescription")}
+          </DialogDescription>
+        </DialogHeader>
+        <form action={formAction} className="space-y-4">
+          <div className="space-y-2">
+            <Label htmlFor="firstName">{t("firstName")}</Label>
+            <Input id="firstName" type="text" name="firstName" placeholder={t("firstName")} required />
           </div>
+          <div className="space-y-2">
+            <Label htmlFor="lastName">{t("lastName")}</Label>
+            <Input id="lastName" type="text" name="lastName" placeholder={t("lastName")} required />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="email">{t("email")}</Label>
+            <Input id="email" type="email" name="email" placeholder={t("email")} required />
+          </div>
+          <Button type="submit" className="w-full" disabled={isPending}>
+            {isPending && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
+            {isPending ? t("adding") : t("addEmployee")}
+          </Button>
         </form>
       </DialogContent>
     </Dialog>

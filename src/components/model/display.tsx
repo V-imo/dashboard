@@ -23,7 +23,6 @@ export default async function ModelDisplay({ model }: ModelDisplayProps) {
   const tShared = await getTranslations("Shared");
   return (
     <div className="flex flex-col gap-6 max-w-6xl w-full px-4 sm:px-6">
-      {/* Model Name */}
       <Card>
         <CardHeader>
           <div className="flex items-center gap-2">
@@ -36,7 +35,6 @@ export default async function ModelDisplay({ model }: ModelDisplayProps) {
         </CardHeader>
       </Card>
 
-      {/* Rooms Section */}
       <Card>
         <CardHeader>
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">

@@ -3,6 +3,7 @@ import "./globals.css";
 import { Toaster } from "@/components/ui/sonner";
 import { NextIntlClientProvider } from "next-intl";
 import Providers from "./providers";
+import Footer from "@/components/footer";
 
 export const metadata: Metadata = {
   title: "V'imo Dashboard",
@@ -23,9 +24,10 @@ export default function RootLayout({
   return (
     <NextIntlClientProvider>
       <Providers>
-        <html lang="en">
-          <body className="flex flex-col items-center min-h-screen">
+        <html lang="en" className="h-full">
+          <body className="flex flex-col min-h-screen bg-background text-foreground">
             {children}
+            <Footer />
             <Toaster position="bottom-right" />
           </body>
         </html>

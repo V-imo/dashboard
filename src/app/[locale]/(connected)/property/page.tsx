@@ -66,14 +66,14 @@ async function PropertyPageContent() {
                   : t("nA");
                 const address = `${property.address.number} ${property.address.street}, ${property.address.city} ${property.address.zipCode}`;
                 return (
-                  <TableRow
+                    <TableRow
                     key={property.propertyId}
-                    className="cursor-pointer hover:bg-muted/50 group"
+                    className="cursor-pointer group"
                   >
                     <TableCell className="font-medium">
                       <Link
                         href={`/property/${property.propertyId}`}
-                        className="block w-full group-hover:underline"
+                        className="block w-full text-foreground hover:text-primary transition-colors duration-150"
                       >
                         {ownerName}
                       </Link>
@@ -81,7 +81,7 @@ async function PropertyPageContent() {
                     <TableCell>
                       <Link
                         href={`/property/${property.propertyId}`}
-                        className="block w-full group-hover:underline"
+                        className="block w-full text-foreground hover:text-primary transition-colors duration-150"
                       >
                         {address}
                       </Link>

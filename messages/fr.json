@@ -164,7 +164,10 @@
     "room": "Pièce",
     "rooms": "Pièces",
     "element": "Elément",
-    "notSet": "Non défini"
+    "notSet": "Non défini",
+    "exportPdf": "Exporter PDF",
+    "exportPdfLoading": "Chargement...",
+    "exportPdfError": "PDF non disponible, veuillez réessayer dans quelques instants"
   },
   "InspectionCreateForm": {
     "property": "Propriété",
@@ -369,5 +372,15 @@
     "email": "Email",
     "employeeAddedSuccess": "Employé ajouté avec succès",
     "failedToAddEmployee": "Échec de l'ajout de l'employé"
+  },
+  "Footer": {
+    "brand": "V'imo - Gestion Immobilière",
+    "product": "Produit",
+    "company": "Entreprise",
+    "followUs": "Suivez-nous",
+    "privacyPolicy": "Politique de confidentialité",
+    "termsOfUse": "Conditions d'utilisation",
+    "allRightsReserved": "Tous droits réservés",
+    "madeWithLove": "Fait avec"
   }
 }

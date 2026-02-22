@@ -16,19 +16,21 @@ import { ReactNode } from "react";
 import { useTranslations } from "next-intl";
 import { signOut, useSession } from "next-auth/react";
 import { Button } from "@/components/ui/button";
-import { LogOut } from "lucide-react";
+import { LogOut, Home, Building2, Key, ClipboardCheck, Users } from "lucide-react";
 
 const ListItem = ({
   className,
   title,
   children,
   href,
+  icon: Icon,
   ...props
 }: {
   className?: string;
   title: string;
   children: React.ReactNode;
   href: string;
+  icon?: React.ComponentType<{ className?: string }>;
 }) => {
   return (
     <li>
@@ -37,12 +39,15 @@ const ListItem = ({
           href={href}
           prefetch={true}
           className={cn(
-            "block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground",
+            "block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-all duration-200 hover:bg-primary/10 hover:text-primary focus:bg-primary/10 focus:text-primary",
             className
           )}
           {...props}
         >
-          <div className="text-sm font-medium leading-none">{title}</div>
+          <div className="text-sm font-medium leading-none flex items-center gap-2">
+            {Icon && <Icon className="h-4 w-4" />}
+            {title}
+          </div>
           <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
             {children}
           </p>
@@ -60,44 +65,52 @@ export function NavMenu({ children }: { children?: ReactNode }) {
     {
       name: t("home"),
       href: "/",
+      icon: Home,
     },
     {
       name: t("agency"),
       href: "/agency",
+      icon: Building2,
     },
     {
       name: t("properties"),
       href: "/property",
+      icon: Key,
       children: [
         {
           name: t("allProperties"),
           href: "/property",
           description: t("allPropertiesDesc"),
+          icon: Key,
         },
         {
           name: t("createProperty"),
           href: "/property/new",
           description: t("createPropertyDesc"),
+          icon: Key,
         },
         {
           name: t("model"),
           href: "/model",
           description: t("modelDesc"),
+          icon: Key,
         },
       ],
-      },
-      {
-        name: t("inspections"),
-        href: "/inspection",
-      },
-      {
-        name: t("employees"),
-        href: "/employee",
-      },
+    },
+    {
+      name: t("inspections"),
+      href: "/inspection",
+      icon: ClipboardCheck,
+    },
+    {
+      name: t("employees"),
+      href: "/employee",
+      icon: Users,
+    },
   ];
 
   return (
-    <div className="flex items-center w-full justify-between px-4">
+    <div className="flex items-center w-full justify-between">
       <div className="flex-1 flex">
         {children || (
           <NavigationMenu>
@@ -106,17 +119,21 @@ export function NavMenu({ children }: { children?: ReactNode }) {
                 <NavigationMenuItem key={page.href}>
                   {page.children ? (
                     <>
-                      <NavigationMenuTrigger>{page.name}</NavigationMenuTrigger>
+                      <NavigationMenuTrigger className="flex items-center gap-2">
+                        {page.icon && <page.icon className="h-4 w-4" />}
+                        {page.name}
+                      </NavigationMenuTrigger>
                       <NavigationMenuContent>
                         <ul className="grid gap-2 md:w-[400px] lg:w-[500px] lg:grid-cols-[.75fr_1fr]">
                           <li className="row-span-3">
                             <NavigationMenuLink asChild>
                               <Link
-                                className="from-muted/50 to-muted flex h-full w-full flex-col justify-end rounded-md bg-gradient-to-b p-4 no-underline outline-none transition-all duration-200 select-none focus:shadow-md md:p-6"
+                                className="from-primary/10 to-primary/5 flex h-full w-full flex-col justify-end rounded-md bg-gradient-to-b p-4 no-underline outline-none transition-all duration-200 select-none hover:from-primary/20 hover:to-primary/10 focus:shadow-md md:p-6"
                                 href={page.href}
                                 prefetch={true}
                               >
-                                <div className="mb-2 text-lg font-medium sm:mt-4">
+                                <div className="mb-2 text-lg font-medium sm:mt-4 flex items-center gap-2">
+                                  {page.icon && <page.icon className="h-5 w-5" />}
                                   {page.name}
                                 </div>
                                 <p className="text-muted-foreground text-sm leading-tight">
@@ -130,6 +147,7 @@ export function NavMenu({ children }: { children?: ReactNode }) {
                               key={child.href}
                               href={child.href}
                               title={child.name}
+                              icon={child.icon}
                             >
                               {child.description}
                             </ListItem>
@@ -144,7 +162,10 @@ export function NavMenu({ children }: { children?: ReactNode }) {
                         prefetch={true}
                         className={navigationMenuTriggerStyle()}
                       >
-                        {page.name}
+                        <div className="flex items-center gap-2">
+                          {page.icon && <page.icon className="h-4 w-4" />}
+                          {page.name}
+                        </div>
                       </Link>
                     </NavigationMenuLink>
                   )}

@@ -36,17 +36,18 @@ export default function DeleteButton(props: {
   return (
     <form action={formAction}>
       <Button
-        variant="destructive"
+        variant="ghost"
         size="sm"
         type="submit"
         disabled={session?.user?.email === props.email}
+        className="text-destructive hover:text-destructive hover:bg-destructive/10"
       >
         {isPending ? (
           <Loader2 className="w-4 h-4 animate-spin" />
         ) : (
           <TrashIcon className="w-4 h-4" />
         )}
-        {t("deleteEmployee")}
+        <span className="hidden sm:inline">{t("deleteEmployee")}</span>
       </Button>
     </form>
   );

@@ -83,7 +83,7 @@ async function InspectionPageContent() {
                 return (
                   <TableRow
                     key={inspection.inspectionId}
-                    className="cursor-pointer hover:bg-muted/50 group"
+                    className="cursor-pointer group"
                   >
                     <TableCell>
                       <Link
@@ -96,7 +96,7 @@ async function InspectionPageContent() {
                     <TableCell>
                       <Link
                         href={`/property/${inspection.propertyId}/inspection/${inspection.inspectionId}`}
-                        className="block w-full group-hover:underline"
+                        className="block w-full text-foreground hover:text-primary transition-colors duration-150"
                       >
                         {inspectionDate}
                       </Link>
@@ -104,7 +104,7 @@ async function InspectionPageContent() {
                     <TableCell>
                       <Link
                         href={`/property/${inspection.propertyId}/inspection/${inspection.inspectionId}`}
-                        className="block w-full group-hover:underline"
+                        className="block w-full text-foreground hover:text-primary transition-colors duration-150"
                       >
                         {propertyAddress}
                       </Link>

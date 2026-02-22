@@ -62,12 +62,12 @@ async function ModelPageContent() {
               {models.map((model) => (
                 <TableRow
                   key={model.modelId}
-                  className="cursor-pointer hover:bg-muted/50 group"
+                  className="cursor-pointer group"
                 >
                   <TableCell className="font-medium">
                     <Link
                       href={`/model/${model.modelId}`}
-                      className="block w-full group-hover:underline"
+                      className="block w-full text-foreground hover:text-primary transition-colors duration-150"
                     >
                       {model.name}
                     </Link>

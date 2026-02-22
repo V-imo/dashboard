@@ -11,6 +11,7 @@ import { Label } from "../ui/label";
 import { Inspection, Property } from "@/lib/dashboard-mgt-bff";
 import { Calendar, UserCheck, Home } from "lucide-react";
 import InspectionStatusBadge from "./status-badge";
+import ExportPdfButton from "./export-pdf-button";
 import ElementStateBadge from "../shared/element-state-badge";
 import { getElementTypeConfig } from "../shared/element-type-icon";
 import { Badge } from "../ui/badge";
@@ -61,7 +62,16 @@ export default async function InspectionDisplay({
                 {t("inspectionDetails")}
               </CardTitle>
             </div>
-            <InspectionStatusBadge status={inspection.status} />
+            <div className="flex items-center gap-2">
+              <InspectionStatusBadge status={inspection.status} />
+              {inspection.status === "DONE" && (
+                <ExportPdfButton
+                  agencyId={inspection.agencyId}
+                  propertyId={inspection.propertyId}
+                  inspectionId={inspection.inspectionId!}
+                />
+              )}
+            </div>
           </div>
           <CardDescription>{t("inspectionInfo")}</CardDescription>
         </CardHeader>

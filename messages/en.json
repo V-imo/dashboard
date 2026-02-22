@@ -164,7 +164,10 @@
     "room": "Room",
     "rooms": "Rooms",
     "element": "Element",
-    "notSet": "Not set"
+    "notSet": "Not set",
+    "exportPdf": "Export PDF",
+    "exportPdfLoading": "Loading...",
+    "exportPdfError": "PDF not available yet, please try again in a few moments"
   },
   "InspectionCreateForm": {
     "property": "Property",
@@ -369,5 +372,15 @@
     "firstName": "First Name",
     "lastName": "Last Name",
     "email": "Email"
+  },
+  "Footer": {
+    "brand": "V'imo - Real Estate Management",
+    "product": "Product",
+    "company": "Company",
+    "followUs": "Follow Us",
+    "privacyPolicy": "Privacy Policy",
+    "termsOfUse": "Terms of Use",
+    "allRightsReserved": "All rights reserved",
+    "madeWithLove": "Made with"
   }
 }
